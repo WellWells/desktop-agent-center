@@ -1,0 +1,332 @@
+// src/main/providers/chatgpt.ts — Electron DOM-injection automation for ChatGPT web
+import type { BrowserWindow } from 'electron';
+import { navigateAndWait, INJECTED_SLEEP_JS, INJECTED_WAIT_FOR_JS, INJECTED_INTERCEPT_COPY_JS } from './common';
+import { isExpiredCookie } from '../helpers';
+import { PROVIDER_URLS } from '../../shared/types';
+
+const CHATGPT_HOME = PROVIDER_URLS.chatgpt;
+export const CHATGPT_LOGIN_URL = 'https://auth.openai.com/log-in-or-create-account';
+const CHATGPT_LOGIN_REQUIRED = 'CHATGPT_LOGIN_REQUIRED';
+const CHATGPT_SESSION_COOKIE_PREFIX = '__Secure-next-auth.session-token';
+const CHATGPT_LOGOUT_DEBUG_COOKIE = 'oai-logout-debug-context';
+
+export function isChatgptLoginRequiredError(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err ?? '');
+  return (
+    msg.includes(CHATGPT_LOGIN_REQUIRED) ||
+    msg.includes('ChatGPT input area not found') ||
+    msg.includes('Timeout waiting for: ChatGPT input area') ||
+    msg.includes('ChatGPT page indicates logged-out state')
+  );
+}
+
+async function getChatgptCookies(workerWin: BrowserWindow) {
+  const cookieCandidates = await Promise.all([
+    workerWin.webContents.session.cookies.get({ url: CHATGPT_HOME }),
+    workerWin.webContents.session.cookies.get({ url: CHATGPT_LOGIN_URL }),
+    workerWin.webContents.session.cookies.get({ url: 'https://chat.openai.com/' }),
+  ]);
+  return cookieCandidates.flat();
+}
+
+async function getChatgptAuthSignals(workerWin: BrowserWindow): Promise<{
+  hasSessionCookie: boolean;
+  hasLogoutDebugCookie: boolean;
+}> {
+  const cookies = await getChatgptCookies(workerWin);
+  const hasSessionCookie = cookies.some(
+    (cookie) =>
+      cookie.name.startsWith(CHATGPT_SESSION_COOKIE_PREFIX) &&
+      !isExpiredCookie(cookie.expirationDate),
+  );
+  const hasLogoutDebugCookie = cookies.some(
+    (cookie) =>
+      cookie.name === CHATGPT_LOGOUT_DEBUG_COOKIE &&
+      !isExpiredCookie(cookie.expirationDate),
+  );
+  return { hasSessionCookie, hasLogoutDebugCookie };
+}
+
+async function getChatgptPageSignals(workerWin: BrowserWindow): Promise<{
+  isAuthHost: boolean;
+  hasComposer: boolean;
+  hasLoginCta: boolean;
+  hasExpiredSessionModalHint: boolean;
+}> {
+  return await workerWin.webContents.executeJavaScript(`
+    (() => {
+      const host = (location.hostname || '').toLowerCase();
+      const isAuthHost = host.includes('auth.openai.com');
+      const hasComposer = Boolean(
+        document.querySelector('#prompt-textarea[contenteditable="true"]') ||
+        document.querySelector('form[data-type="unified-composer"] #prompt-textarea'),
+      );
+      const ctas = Array.from(document.querySelectorAll('button, a'))
+        .map((el) => (el.textContent || '').trim())
+        .filter(Boolean);
+      const hasLoginCta = ctas.some((text) => /^(Log in|Sign in)$/i.test(text));
+      const hasExpiredSessionModalHint =
+        ctas.some((text) => /expired session/i.test(text)) ||
+        document.body.innerText.includes('auth.expired-session-modal');
+      return { isAuthHost, hasComposer, hasLoginCta, hasExpiredSessionModalHint };
+    })()
+  `, false);
+}
+
+function isLoginRequiredFromSignals(
+  auth: { hasSessionCookie: boolean; hasLogoutDebugCookie: boolean },
+  page: { isAuthHost: boolean; hasComposer: boolean; hasLoginCta: boolean; hasExpiredSessionModalHint: boolean },
+): boolean {
+  if (!auth.hasSessionCookie) return true;
+  if (page.isAuthHost || page.hasLoginCta || page.hasExpiredSessionModalHint) return true;
+  if (auth.hasLogoutDebugCookie && !page.hasComposer) return true;
+  return false;
+}
+
+export async function runChatgptAutomation(
+  workerWin: BrowserWindow,
+  prompt: string,
+  timeoutMs = 60_000,
+  targetUrl: string = CHATGPT_HOME,
+): Promise<{ response: string; title: string }> {
+  const wc = workerWin.webContents;
+
+  await navigateAndWait(wc, targetUrl);
+
+  const authSignals = await getChatgptAuthSignals(workerWin);
+  const pageSignals = await getChatgptPageSignals(workerWin);
+  if (isLoginRequiredFromSignals(authSignals, pageSignals)) {
+    await navigateAndWait(wc, CHATGPT_LOGIN_URL);
+    throw new Error(
+      `${CHATGPT_LOGIN_REQUIRED}: ChatGPT page indicates logged-out state (session=${authSignals.hasSessionCookie}, logoutDebug=${authSignals.hasLogoutDebugCookie}, composer=${pageSignals.hasComposer})`,
+    );
+  }
+
+  await wc.executeJavaScript(`
+    window.dispatchEvent(new FocusEvent('focus', { bubbles: false }));
+    document.dispatchEvent(new FocusEvent('focus', { bubbles: true }));
+  `, false);
+
+  let baseline = 0;
+  try {
+    baseline = await wc.executeJavaScript(
+      `document.querySelectorAll('[data-message-author-role="assistant"]').length`,
+      false,
+    );
+  } catch {
+    baseline = 0;
+  }
+
+  const autoScript = buildChatgptAutomationScript(prompt, baseline, timeoutMs);
+
+  let nodeTimeoutId!: ReturnType<typeof setTimeout>;
+  const nodeTimeout = new Promise<never>((_, reject) => {
+    nodeTimeoutId = setTimeout(
+      () => reject(new Error('ChatGPT automation timed out (Node side)')),
+      Math.max(timeoutMs * 5, 300_000),
+    );
+  });
+
+  let result: { response: string; title: string };
+  try {
+    result = await Promise.race([wc.executeJavaScript(autoScript, true), nodeTimeout]);
+  } catch (err: unknown) {
+    throw new Error(`ChatGPT automation failed: ${(err as Error).message}`);
+  } finally {
+    clearTimeout(nodeTimeoutId);
+  }
+
+  if (!result || !result.response || result.response.trim() === '') {
+    throw new Error('ChatGPT returned empty response');
+  }
+
+  return {
+    response: result.response.trim(),
+    title: (result.title || '').trim(),
+  };
+}
+
+function buildChatgptAutomationScript(
+  prompt: string,
+  baselineMessageCount: number,
+  timeoutMs: number,
+): string {
+  const escapedPrompt = JSON.stringify(prompt);
+
+  return `
+(async function chatgptAutomate() {
+  var TIMEOUT  = ${timeoutMs};
+  var BASELINE = ${baselineMessageCount};
+  var startedAt = Date.now();
+  ${INJECTED_SLEEP_JS}
+  ${INJECTED_WAIT_FOR_JS}
+
+  function getAssistantTurns() {
+    return document.querySelectorAll('[data-message-author-role="assistant"]');
+  }
+
+  function getLatestAssistantTurn() {
+    var turns = getAssistantTurns();
+    return turns[turns.length - 1] || null;
+  }
+
+  function getTurnText(turn) {
+    if (!turn) return '';
+    var markdown = turn.querySelector('.markdown.prose, .markdown, [class*="markdown"]');
+    if (markdown && (markdown.innerText || '').trim()) {
+      return (markdown.innerText || '').trim();
+    }
+    return (turn.innerText || '').trim();
+  }
+
+  // Redesigned: find the copy button for a given assistant turn.
+  function findCopyButtonForTurn(turn) {
+    if (!turn) return null;
+    
+    // The action bar lives outside the assistant bubble in recent DOM versions;
+    // walk up to the enclosing turn container (.agent-turn or .group/turn-messages).
+    var turnContainer = turn.closest('.agent-turn') || turn.closest('.group\\\\/turn-messages') || turn.parentElement.parentElement;
+    var searchContext = turnContainer || document;
+
+    // Use exact selectors only — avoids matching code-block copy buttons.
+    var selectors = [
+      'button[data-testid="copy-turn-action-button"]',
+      'button[aria-label="Copy response"]'
+    ];
+
+    for (var i = 0; i < selectors.length; i++) {
+      var btns = searchContext.querySelectorAll(selectors[i]);
+      if (btns && btns.length > 0) return btns[btns.length - 1]; // last button = latest response
+    }
+    return null;
+  }
+
+  ${INJECTED_INTERCEPT_COPY_JS}
+
+  var INPUT_SELECTORS = [
+    '#prompt-textarea[contenteditable="true"]',
+    'form[data-type="unified-composer"] #prompt-textarea',
+    'div[contenteditable="true"]#prompt-textarea',
+    'div[contenteditable="true"][role="textbox"][aria-multiline="true"]',
+  ];
+
+  var input = null;
+  await waitFor(function() {
+    for (var i = 0; i < INPUT_SELECTORS.length; i++) {
+      var el = document.querySelector(INPUT_SELECTORS[i]);
+      if (el) { input = el; return true; }
+    }
+    return false;
+  }, 'ChatGPT input area', 15000, 200);
+
+  if (!input) throw new Error('ChatGPT input area not found');
+
+  input.focus();
+  input.textContent = '';
+  input.dispatchEvent(new InputEvent('input', {
+    bubbles: true, cancelable: true, inputType: 'deleteContent'
+  }));
+  await sleep(80);
+  var dt = new DataTransfer();
+  dt.setData('text/plain', ${escapedPrompt});
+  input.dispatchEvent(new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true }));
+  if (!(input.innerText || '').trim()) {
+    document.execCommand('insertText', false, ${escapedPrompt});
+  }
+  input.dispatchEvent(new InputEvent('input', {
+    bubbles: true, cancelable: true, inputType: 'insertText'
+  }));
+  await sleep(250);
+
+  var SEND_SELECTORS = [
+    'button[data-testid="send-button"]',
+    'button[aria-label="Send prompt"]',
+    'button[aria-label="Submit"]',
+  ];
+
+  var sent = false;
+  for (var attempt = 0; attempt < 28 && !sent; attempt++) {
+    for (var s = 0; s < SEND_SELECTORS.length; s++) {
+      var sendBtn = document.querySelector(SEND_SELECTORS[s]);
+      if (sendBtn && !sendBtn.disabled) {
+        sendBtn.click();
+        sent = true;
+        break;
+      }
+    }
+    if (!sent) await sleep(120);
+  }
+
+  if (!sent) {
+    input.dispatchEvent(new KeyboardEvent('keydown', {
+      key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true, cancelable: true
+    }));
+    await sleep(40);
+    input.dispatchEvent(new KeyboardEvent('keyup', {
+      key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true
+    }));
+  }
+
+  await waitFor(function() {
+    return getAssistantTurns().length > BASELINE;
+  }, 'new ChatGPT response', TIMEOUT, 350);
+
+  await waitFor(function() {
+    var turn = getLatestAssistantTurn();
+    return !!getTurnText(turn);
+  }, 'ChatGPT response text', TIMEOUT, 350);
+
+  var stableText = '';
+  var stableCount = 0;
+  var NO_CHANGE_LIMIT = 30000;
+  var chatLastChangeAt = null;
+  while (true) {
+    var turn = getLatestAssistantTurn();
+    var text = getTurnText(turn);
+    if (text !== stableText) {
+      stableText = text;
+      stableCount = 0;
+      if (text) chatLastChangeAt = Date.now();
+    } else if (text) {
+      stableCount += 1;
+    }
+    if (stableText && stableCount >= 3) break;
+    if (chatLastChangeAt !== null && Date.now() - chatLastChangeAt > NO_CHANGE_LIMIT) {
+      if (stableText) break;
+      throw new Error('ChatGPT automation timed out: no response changes for 30 seconds');
+    }
+    await sleep(350);
+  }
+
+  var latestTurn = getLatestAssistantTurn();
+  if (!latestTurn) throw new Error('ChatGPT response block not found');
+
+  // Hover must target the whole turn container, not just the text block.
+  var actionContainer = latestTurn.closest('.agent-turn') || latestTurn.closest('.group\\/turn-messages') || latestTurn;
+  actionContainer.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, composed: true }));
+  actionContainer.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true, composed: true }));
+  await sleep(300);
+
+  // Wait for the copy button to appear after hover.
+  var copyBtn = null;
+  for (var cbWait = 0; cbWait < 15; cbWait++) {
+    copyBtn = findCopyButtonForTurn(latestTurn);
+    if (copyBtn) break;
+    await sleep(200);
+  }
+
+  var answerText = getTurnText(latestTurn);
+  var copiedText = copyBtn ? ((await interceptCopy(copyBtn)) || '').trim() : '';
+  
+  // Prefer the intercepted clipboard text; fall back to innerText if empty.
+  var finalAnswer = copiedText || answerText;
+  if (!finalAnswer) throw new Error('ChatGPT response is empty');
+
+  var title = '';
+  try {
+    title = (document.title || '').replace(/\\s*-\\s*ChatGPT$/i, '').trim();
+  } catch (e) {}
+
+  return { response: finalAnswer, title: title };
+})()`;
+}

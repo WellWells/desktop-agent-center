@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "outDir": "out",
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["src/shared/*"]
+    }
+  },
+  "include": [
+    "vite.main.config.*",
+    "vite.preload.config.*",
+    "vite.renderer.config.*",
+    "scripts/**/*",
+    "src/main/**/*",
+    "src/preload/**/*",
+    "src/shared/**/*"
+  ]
+}

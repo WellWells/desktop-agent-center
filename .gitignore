@@ -1,0 +1,30 @@
+# Project
+sessions/
+outputs/
+
+# Dependencies & Build
+node_modules/
+out/
+dist/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs & Caches
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+*.tsbuildinfo
+
+# System & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+config.json

@@ -1,0 +1,152 @@
+{
+  "name": "desktop-agent-center",
+  "version": "1.0.0",
+  "description": "Desktop Agent Center (DAC) — Multi-AI integration via global hotkey, Electron + React UI, clipboard automation & local markdown storage",
+  "author": "WellsTsai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WellWells/desktop-agent-center.git"
+  },
+  "bugs": {
+    "url": "https://github.com/WellWells/desktop-agent-center/issues"
+  },
+  "homepage": "https://github.com/WellWells/desktop-agent-center#readme",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "main": "out/main/index.js",
+  "scripts": {
+    "start": "electron out/main/index.js",
+    "dev": "tsx scripts/electron-dev.ts",
+    "build:compile": "vite build -c vite.main.config.ts && vite build -c vite.preload.config.ts && vite build -c vite.renderer.config.ts",
+    "prepare:icons": "tsx scripts/generate-icons.ts",
+    "build:win": "npm run prepare:icons && npm run build:compile && electron-builder --win",
+    "build:mac": "npm run prepare:icons && npm run build:compile && electron-builder --mac",
+    "build": "npm run build:win",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "i18n:check": "tsx scripts/i18n-check.ts"
+  },
+  "keywords": [
+    "electron",
+    "gemini",
+    "clipboard",
+    "automation",
+    "no-api-key"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@grammyjs/conversations": "^2.1.1",
+    "@mantine/core": "^9.1.1",
+    "@mantine/hooks": "^9.1.1",
+    "@mantine/modals": "^9.1.1",
+    "@mantine/notifications": "^9.1.1",
+    "cheerio": "^1.2.0",
+    "dayjs": "^1.11.20",
+    "electron-store": "^11.0.2",
+    "electron-updater": "^6.8.3",
+    "fdir": "^6.5.0",
+    "grammy": "^1.42.0",
+    "katex": "^0.16.45",
+    "lucide-react": "^1.14.0",
+    "marked": "^18.0.3",
+    "postcss": "^8.5.13",
+    "postcss-preset-mantine": "^1.18.0",
+    "postcss-simple-vars": "^7.0.1",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-markdown": "^10.1.0",
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "shiki": "^4.0.2",
+    "zustand": "^5.0.12"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "electron": "^41.5.0",
+    "electron-builder": "^26.8.1",
+    "png-to-ico": "^3.0.1",
+    "png2icons": "^2.0.1",
+    "tsx": "^4.0.0",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.10"
+  },
+  "build": {
+    "appId": "com.wellstsai.dac",
+    "productName": "Desktop Agent Center",
+    "executableName": "DesktopAgentCenter",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "out/**/*",
+      "!out/**/*.js.map",
+      "!out/**/*.css.map"
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "WellWells",
+        "repo": "desktop-agent-center"
+      }
+    ],
+    "extraResources": [
+      {
+        "from": "assets/",
+        "to": "assets/",
+        "filter": [
+          "*.png",
+          "*.ico",
+          "*.icns"
+        ]
+      },
+      {
+        "from": "LICENSE",
+        "to": "LICENSE"
+      }
+    ],
+    "win": {
+      "icon": "assets/icon-win.ico",
+      "target": [
+        "nsis",
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "portable": {
+      "artifactName": "DesktopAgentCenter-${version}-win-x64.exe"
+    },
+    "mac": {
+      "icon": "assets/icon-mac.icns",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "category": "public.app-category.productivity",
+      "artifactName": "DesktopAgentCenter-${version}-mac-${arch}.${ext}"
+    },
+    "dmg": {
+      "artifactName": "DesktopAgentCenter-${version}-mac-${arch}.dmg"
+    }
+  }
+}

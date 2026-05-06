@@ -1,0 +1,110 @@
+/* Sidebar.module.css */
+
+.sidebar {
+  width: 240px;
+  min-width: 180px;
+  max-width: 300px;
+  background: var(--mantine-color-default);
+  border-right: 1px solid var(--mantine-color-default-border);
+  overflow: hidden;
+  position: relative;
+}
+
+.header {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--mantine-color-default-border);
+  flex-shrink: 0;
+}
+
+.headerLabel {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--mantine-color-dimmed);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.searchBar {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.fileList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.emptyState {
+  padding: 20px 14px;
+  color: var(--mantine-color-dimmed);
+  font-size: var(--font-size-base);
+  text-align: center;
+}
+
+/* ── FileItem ────────────────────────────────────────────────────────────── */
+
+.fileItem {
+  padding: 6px 10px;
+  border-radius: 8px;
+  margin: 2px 8px;
+  background: transparent;
+  border-left: 2px solid transparent;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  cursor: pointer;
+  outline: none;
+}
+
+.fileItem:hover {
+  background: var(--mantine-color-default-hover);
+}
+
+.fileItem:focus-visible {
+  box-shadow: 0 0 0 2px var(--mantine-color-accent-dim);
+}
+
+.fileItem[data-selected='true'] {
+  background: var(--mantine-color-accent-dim);
+  border-left-color: var(--mantine-color-accent);
+}
+
+.fileItem[data-editing='true'] {
+  cursor: text;
+}
+
+.timestamp {
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.timestamp[data-selected='true'] {
+  color: var(--mantine-color-dimmed);
+}
+
+.timestamp[data-selected='false'] {
+  color: var(--mantine-color-dimmed);
+  opacity: 0.65;
+}
+
+.preview {
+  color: var(--mantine-color-dimmed);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: normal;
+  line-height: 1.4;
+}
+
+.editInput {
+  width: 100%;
+  background: var(--mantine-color-body);
+  border: 1px solid var(--mantine-color-accent);
+  border-radius: var(--mantine-radius-xs);
+  color: var(--mantine-color-text);
+  font-size: var(--font-size-base);
+  padding: 4px 6px;
+  outline: none;
+  user-select: text;
+}

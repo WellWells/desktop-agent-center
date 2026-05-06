@@ -1,0 +1,70 @@
+import React from 'react';
+import { Clock3 } from 'lucide-react';
+import dayjs from 'dayjs';
+
+interface TimeBlockProps {
+  time: string;
+  provider?: string | null;
+  action?: React.ReactNode;
+}
+
+function formatDisplayTime(raw: string): string {
+  const normalized = raw.trim();
+  if (!normalized) return '';
+  const parsed = dayjs(normalized);
+  if (parsed.isValid()) return parsed.format('YYYY-MM-DD HH:mm:ss');
+  const fallbackParsed = dayjs(normalized.replace(' ', 'T'));
+  return fallbackParsed.isValid() ? fallbackParsed.format('YYYY-MM-DD HH:mm:ss') : normalized;
+}
+
+export const TimeBlock = React.memo<TimeBlockProps>(({ time, provider, action }) => {
+  const displayTime = formatDisplayTime(time);
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      gap: 6,
+      padding: '4px 0 10px',
+      color: 'var(--text-muted)',
+      fontSize: 'var(--font-size-sm)',
+      userSelect: 'text',
+    }}>
+      {provider && (
+        <div style={{
+          width: 'fit-content',
+          fontSize: 'var(--font-size-xs)',
+          fontWeight: 700,
+          color: 'var(--text-secondary)',
+          border: '1px solid var(--border)',
+          background: 'var(--bg-tertiary)',
+          borderRadius: 999,
+          padding: '1px 7px',
+          letterSpacing: 0.2,
+        }}>
+          {provider}
+        </div>
+      )}
+      {displayTime && (
+        <>
+          <Clock3 size={13} style={{ opacity: 0.75, marginTop: 1 }} />
+          <span style={{
+            fontFamily: 'var(--font-mono)',
+            letterSpacing: '0.4px',
+            whiteSpace: 'normal',
+            wordBreak: 'break-word',
+            overflowWrap: 'anywhere',
+          }}>
+            {displayTime}
+          </span>
+        </>
+      )}
+      {action && (
+        <div style={{ marginLeft: 10, display: 'inline-flex', alignItems: 'center' }}>
+          {action}
+        </div>
+      )}
+    </div>
+  );
+});
+

@@ -5,7 +5,7 @@ import { runGeminiAutomation } from './gemini';
 import { runPerplexityAutomation } from './perplexity';
 import { CHATGPT_LOGIN_URL, isChatgptLoginRequiredError, runChatgptAutomation } from './chatgpt';
 import { runDuckaiAutomation } from './duckai';
-import { PROVIDER_URLS, PROVIDER_LABELS } from '../../shared/types';
+import { PROVIDER_LABELS } from '../../shared/types';
 import type { Provider } from '../../shared/types';
 
 export type { Provider };

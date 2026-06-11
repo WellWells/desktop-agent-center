@@ -1,0 +1,198 @@
+// src/main/ipcHandlers.ts — IPC handler registration entry point.
+//
+// Owns the window/queue/trigger/duck.ai handlers directly and delegates focused
+// groups (files, telegram, locale, settings, flow) to registerXxxHandlers modules.
+
+import { ipcMain, nativeImage, shell } from 'electron';
+import { IPC, PROVIDER_URLS } from '../../shared/types';
+import type { PromptTriggerOptions } from '../../shared/types';
+import { config, saveConfig } from '../config';
+import { detectProvider, getProviderLabel } from '../providers';
+import { fetchDuckaiModels } from '../providers/duckai';
+import {
+  sendLog,
+  sendToRenderer,
+  sendWebNotification,
+  isHttpUrl,
+  normalizeAiUrl,
+  createTaskId,
+  getAssetPath,
+} from '../helpers';
+import { loadLanguageData } from '../i18n';
+import { resolveUrlPrompt } from '../urlParser';
+import {
+  revealWorkerWindow,
+  hideWorkerWindow,
+  ensureWorkerWindow,
+  showInteractiveWorkerWindow,
+} from '../windows';
+import type { QueueManager } from '../queueManager';
+import type { TelegramRuntime } from '../telegram';
+import type { DuckaiModelInfo } from '../providers/duckai';
+import type { FlowManager } from '../flow';
+import type { IpcContext } from './context';
+import { registerFileHandlers } from './files';
+import { registerTelegramHandlers } from './telegram';
+import { registerLocaleHandlers } from './locale';
+import { registerSettingsHandlers } from './settings';
+import { registerFlowHandlers } from './flow';
+
+// Session-scoped cache: duck.ai model list changes rarely so we fetch once per
+// process lifetime and serve subsequent calls from memory, avoiding extra page
+// navigations that trigger rate-limit (429) responses from duck.ai.
+let duckaiModelsCache: DuckaiModelInfo[] | null = null;
+
+// Idempotent guard — prevents accidental double-registration of ipcMain.on() listeners
+let _ipcInitialized = false;
+
+interface SetupDeps {
+  queue: QueueManager;
+  telegramRuntime: TelegramRuntime;
+  telegramSessionId: string;
+  getMainWin: () => import('electron').BrowserWindow | null;
+  bindHotkey: () => void;
+  checkForUpdates: () => Promise<boolean>;
+  onTraySettingsChanged?: () => void;
+  onTrayMenuRebuild?: () => void;
+  onHideToTray?: () => void;
+  onQuitApp?: () => void;
+  flowManager?: FlowManager;
+}
+
+export function setupIpcHandlers(deps: SetupDeps): void {
+  if (_ipcInitialized) {
+    console.warn('[ipcHandlers] setupIpcHandlers called multiple times — skipping duplicate registration');
+    return;
+  }
+  _ipcInitialized = true;
+
+  const { queue, getMainWin, checkForUpdates } = deps;
+  const ctx: IpcContext = deps;
+
+  async function enqueuePromptFromUi(rawPrompt: string, targetUrl?: string): Promise<string | null> {
+    const text = (rawPrompt ?? '').trim();
+    if (!text) {
+      sendLog('⚠️ Empty UI prompt ignored');
+      return null;
+    }
+
+    const resolvedTargetUrl = targetUrl?.trim()
+      ? normalizeAiUrl(targetUrl)
+      : config.targetUrl;
+
+    const langData = await loadLanguageData(config.locale) ?? {};
+    const prompt = await resolveUrlPrompt(text, {
+      langData: langData as Record<string, string>,
+      onLog: sendLog,
+      onNotify: (title, body) => sendWebNotification(title, body, 'info'),
+    });
+
+    const id = createTaskId();
+    queue.enqueue({
+      id,
+      prompt,
+      targetUrl: resolvedTargetUrl,
+      source: 'ui',
+    });
+    sendLog(`[${id}] 🎯 UI prompt queued for ${getProviderLabel(resolvedTargetUrl)}`);
+    return id;
+  }
+
+  // Window control
+  ipcMain.on(IPC.SHOW_WORKER, async () => {
+    if (detectProvider(config.targetUrl) === 'perplexity') {
+      await showInteractiveWorkerWindow(config.targetUrl);
+      return;
+    }
+    await ensureWorkerWindow(config.targetUrl);
+    revealWorkerWindow();
+  });
+  ipcMain.on(IPC.HIDE_WORKER, () => hideWorkerWindow());
+  ipcMain.handle(IPC.UPDATE_CHECK, () => checkForUpdates());
+
+  // Title bar controls
+  ipcMain.on(IPC.WINDOW_MINIMIZE, () => getMainWin()?.minimize());
+  ipcMain.on(IPC.WINDOW_MAXIMIZE, () => {
+    const win = getMainWin();
+    if (win?.isMaximized()) win.unmaximize();
+    else win?.maximize();
+  });
+  ipcMain.on(IPC.WINDOW_CLOSE, () => getMainWin()?.close());
+
+  ipcMain.handle(IPC.GET_APP_ICON_DATA_URL, () => {
+    const iconFile = process.platform === 'darwin' ? 'icon-mac.png' : 'icon-win.png';
+    const img = nativeImage.createFromPath(getAssetPath(iconFile));
+    return img.toDataURL();
+  });
+
+  ipcMain.handle(IPC.OPEN_EXTERNAL_URL, async (_event, rawUrl: string) => {
+    if (!isHttpUrl(rawUrl)) return false;
+    try {
+      await shell.openExternal(rawUrl);
+      return true;
+    } catch {
+      return false;
+    }
+  });
+
+  // Trigger prompt from UI directly
+  ipcMain.on(IPC.TRIGGER_PROMPT, (_event, prompt: string) => {
+    void enqueuePromptFromUi(prompt, config.targetUrl);
+  });
+
+  ipcMain.handle(IPC.TRIGGER_PROMPT_WITH_OPTIONS, (_event, options: PromptTriggerOptions) =>
+    enqueuePromptFromUi(options?.prompt ?? '', options?.targetUrl),
+  );
+
+  ipcMain.handle(IPC.CANCEL_QUEUE_TASK, (_event, taskId: string) => {
+    const normalizedTaskId = (taskId ?? '').trim();
+    if (!normalizedTaskId) return false;
+    const cancelled = queue.cancel(normalizedTaskId);
+    if (cancelled) sendLog(`[${normalizedTaskId}] 🛑 Queue item cancelled`);
+    return cancelled;
+  });
+
+  ipcMain.handle(IPC.FORCE_SKIP_ACTIVE_TASK, () => {
+    const skipped = queue.forceSkipActive();
+    if (skipped) sendLog('⏭️ Active task force-skipped by user');
+    return skipped;
+  });
+
+  // Close dialog response from renderer
+  ipcMain.on(IPC.RESPOND_CLOSE_DIALOG, (_event, action: 'quit' | 'hide', remember: boolean) => {
+    if (remember) {
+      const hideToTray = action === 'hide';
+      config.closeActionDecided = true;
+      config.closeToTray = hideToTray;
+      saveConfig({ closeActionDecided: true, closeToTray: hideToTray });
+      sendToRenderer(IPC.CLOSE_TO_TRAY_CHANGED, hideToTray);
+      deps.onTraySettingsChanged?.();
+    }
+    if (action === 'hide') {
+      deps.onHideToTray?.();
+    } else {
+      deps.onQuitApp?.();
+    }
+  });
+
+  // Duck AI — dynamic model list fetch (cached per process lifetime)
+  ipcMain.handle(IPC.DUCKAI_FETCH_MODELS, async () => {
+    if (duckaiModelsCache !== null) return duckaiModelsCache;
+    try {
+      const win = await ensureWorkerWindow(PROVIDER_URLS.duckai);
+      if (!win) return [];
+      duckaiModelsCache = await fetchDuckaiModels(win);
+      return duckaiModelsCache;
+    } catch (err: unknown) {
+      sendLog(`⚠️ Duck AI model fetch failed: ${(err as Error).message}`);
+      return [];
+    }
+  });
+
+  // Delegated handler groups
+  registerFileHandlers();
+  registerTelegramHandlers(ctx);
+  registerLocaleHandlers(ctx);
+  registerSettingsHandlers(ctx);
+  registerFlowHandlers(ctx);
+}

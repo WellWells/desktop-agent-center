@@ -1,8 +1,8 @@
 // src/main/helpers.ts — Shared utility functions for the main process
-import { app, clipboard, Notification, session } from 'electron';
+import { app, Notification, session } from 'electron';
 import type { BrowserWindow } from 'electron';
 import * as path from 'node:path';
-import type { UiNotificationPayload } from '../shared/types';
+import type { UiNotificationPayload, WorkerAttention } from '../shared/types';
 import { IPC, PROVIDER_URLS } from '../shared/types';
 import { detectProvider, getProviderLabel } from './providers';
 
@@ -41,7 +41,8 @@ export function applyLaunchAtStartup(enabled: boolean, hideOnStart: boolean = fa
 }
 
 export function sendLog(msg: string): void {
-  const time = new Date().toLocaleTimeString('zh-TW', { hour12: false });
+  // en-GB yields a deterministic 24h HH:mm:ss log timestamp regardless of UI locale
+  const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
   const line = `[${time}] ${msg}`;
   console.log(line);
   sendToRenderer(IPC.LOG, line);
@@ -51,6 +52,13 @@ export function sendToRenderer(channel: string, ...args: unknown[]): void {
   if (_mainWin && !_mainWin.isDestroyed()) {
     _mainWin.webContents.send(channel, ...args);
   }
+}
+
+// Push worker-window attention state to the renderer so the title-bar worker
+// button can surface "needs login" / "needs verification" without relying on
+// transient notifications.
+export function setWorkerAttention(state: WorkerAttention): void {
+  sendToRenderer(IPC.WORKER_STATUS, state);
 }
 
 export function sendWebNotification(
@@ -126,7 +134,6 @@ export async function clearPerplexitySiteDataIfNeeded(
       origin: PROVIDER_URLS.perplexity.replace(/\/$/, ''),
       storages: ['cookies', 'localstorage', 'indexdb', 'serviceworkers', 'cachestorage', 'filesystem', 'websql'],
     });
-    await workerSession.clearCache();
     log(`🧹 Cleared ${providerLabel} cookies/storage`);
   } catch (err: unknown) {
     log(`⚠️ Failed to clear ${providerLabel} site data: ${(err as Error).message}`);

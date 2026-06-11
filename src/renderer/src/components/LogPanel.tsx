@@ -1,6 +1,6 @@
 // src/renderer/src/components/LogPanel.tsx
 import React, { useCallback, useEffect, useRef } from 'react';
-import { Box, Button, Flex, Group, ScrollArea, Stack, Text } from '@mantine/core';
+import { Box, Button, Flex, Group, Stack, Text } from '@mantine/core';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useAppStore } from '../store/appStore';
 import { useI18nStore } from '../store/i18nStore';
@@ -133,14 +133,15 @@ export const LogPanel: React.FC = () => {
         )}
       />
 
-      <ScrollArea
+      <Box
         flex={1}
-        viewportRef={viewportRef}
+        ref={viewportRef}
         bg="var(--mantine-color-body)"
         px={14}
         py={10}
         ff="var(--font-mono)"
         fz="var(--font-size-sm)"
+        style={{ overflowY: 'auto' }}
       >
         {logs.length === 0 ? (
           <Stack align="center" justify="center" gap={8} pt={40} c="dimmed" opacity={0.6}>
@@ -167,7 +168,7 @@ export const LogPanel: React.FC = () => {
             ))}
           </Box>
         )}
-      </ScrollArea>
+      </Box>
     </Stack>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import {
-  ActionIcon, Badge, Box, Code, Group, Paper, Stack, Text, Tooltip,
+  ActionIcon, Badge, Code, Group, Paper, Stack, Text, Tooltip,
 } from '@mantine/core';
 import { ArrowDown, ArrowUp, Trash2 } from 'lucide-react';
 import { AppTextInput } from '../../components/AppTextInput';
@@ -9,7 +9,10 @@ import { SKILL_ICON, SKILL_COLOR, STEP_CONFIG_EDITOR } from './skills';
 import type { SkillInstance, TriggerConfig } from '../../../../shared/types';
 
 export function stepHasOutput(step: SkillInstance): boolean {
-  if (step.type === 'clipboard' || step.type === 'bot' || step.type === 'comment' || step.type === 'loop') return false;
+  if (
+    step.type === 'clipboard' || step.type === 'bot' || step.type === 'comment' ||
+    step.type === 'loop' || step.type === 'end_loop' || step.type === 'if' || step.type === 'end_if'
+  ) return false;
   if (step.type === 'utility') return step.config.action === 'export';
   return true;
 }
@@ -46,7 +49,12 @@ const AvailableVarsHint: React.FC<{
         </React.Fragment>
       ))}
       {prevSteps.map((s) => (
-        <Code key={s.id} fz="xs" c="blue">{`{{${s.outputKey}}}`}</Code>
+        <React.Fragment key={s.id}>
+          <Code fz="xs" c="blue">{`{{${s.outputKey}}}`}</Code>
+          {s.type === 'llm' && s.config.emitFailFlag === 'true' && (
+            <Code fz="xs" c="grape">{`{{${s.outputKey}.isFailed}}`}</Code>
+          )}
+        </React.Fragment>
       ))}
     </Group>
   );
@@ -88,12 +96,12 @@ export const StepCard: React.FC<StepCardProps> = ({
             {stepHasOutput(step) && (
               <Code fz="xs" c="blue">{`{{${step.outputKey}}}`}</Code>
             )}
-            <Tooltip label="Move up" position="top">
+            <Tooltip label={t('agentflow.step.moveUp')} position="top">
               <ActionIcon variant="subtle" size="sm" disabled={index === 0} onClick={() => moveStep(flowId, step.id, 'up')}>
                 <ArrowUp size={14} />
               </ActionIcon>
             </Tooltip>
-            <Tooltip label="Move down" position="top">
+            <Tooltip label={t('agentflow.step.moveDown')} position="top">
               <ActionIcon variant="subtle" size="sm" disabled={index === total - 1} onClick={() => moveStep(flowId, step.id, 'down')}>
                 <ArrowDown size={14} />
               </ActionIcon>

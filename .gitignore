@@ -27,6 +27,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Claude Code — local-only settings (never commit)
+.claude/settings.local.json
+
 config.json
 
 flow-checkpoints

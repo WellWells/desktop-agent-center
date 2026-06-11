@@ -1,154 +1,35 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Button as MButton, Flex, Group, Stack, Text, UnstyledButton } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { Box, Button as MButton, Flex, Group, Text, Tooltip } from '@mantine/core';
 import { useAppStore } from '../store/appStore';
 import { useI18nStore } from '../store/i18nStore';
 import { useUpdateStore } from '../store/useUpdateStore';
 import type { View } from '../store/appStore';
 import { AgentFlowIcon } from './AgentFlowIcon';
-import { Info, ListOrdered, LoaderCircle, MessageSquare, Minus, Plus, ScrollText, Settings, X, ListChecks } from 'lucide-react';
+import { AppWindow, Info, ListOrdered, LogIn, MessageSquare, ScrollText, Settings, ShieldAlert } from 'lucide-react';
+import { systemApi } from '../api/electronApi';
+import {
+  brandGroupStyle,
+  brandTextStyle,
+  isMac,
+  navScrollStyle,
+  statusWrapperStyle,
+  titleBarDynStyle,
+} from './titlebar/constants';
+import { BrandIcon, MacWindowControls, WindowsControls } from './titlebar/WindowControls';
+import { QueuePopover } from './titlebar/QueuePopover';
 import styles from './TitleBar.module.css';
 
-// ─── Module-level statics (computed once, never change) ────────────────────────
-const noDrag: React.CSSProperties = { WebkitAppRegion: 'no-drag' };
-const navigatorWithUserAgentData = navigator as Navigator & { userAgentData?: { platform?: string } };
-const isMac = (navigatorWithUserAgentData.userAgentData?.platform ?? navigator.platform ?? '').toLowerCase().includes('mac');
-
-// Titlebar requires WebkitAppRegion for Electron drag; padding is isMac-conditional but static.
-const titleBarDynStyle: React.CSSProperties = {
-  padding: isMac ? '0 10px' : '0 0 0 10px',
-  WebkitAppRegion: 'drag' as React.CSSProperties['WebkitAppRegion'],
-};
-
-// Static style constants extracted from components to avoid per-render object allocation.
-const brandIconEmptyStyle: React.CSSProperties = { flexShrink: 0 };
-const brandIconImgStyle: React.CSSProperties = { borderRadius: 4, flexShrink: 0, objectFit: 'contain' };
-const brandGroupStyle: React.CSSProperties = { flexShrink: 0, minWidth: 0 };
-const brandTextStyle: React.CSSProperties = { whiteSpace: 'nowrap' };
-const navScrollStyle: React.CSSProperties = {
-  ...noDrag,
-  minWidth: 0,
-  flexShrink: 1,
-  scrollbarWidth: 'none' as React.CSSProperties['scrollbarWidth'],
-};
-const statusWrapperStyle: React.CSSProperties = { ...noDrag, flexShrink: 0 };
-
-// ─── Window action helpers ──────────────────────────────────────────────────────
-function doWindowAction(action: 'minimize' | 'maximize' | 'close'): void {
-  if (action === 'minimize') { window.electronAPI.minimizeWindow(); return; }
-  if (action === 'maximize') { window.electronAPI.maximizeWindow(); return; }
-  window.electronAPI.closeWindow();
-}
-
-function getWindowActionTitle(t: (k: string) => string, action: 'minimize' | 'maximize' | 'close'): string {
-  if (action === 'minimize') return t('window.minimize');
-  if (action === 'maximize') return t('window.maximize');
-  return t('window.close');
-}
-
-// ─── Mac traffic-light button data ─────────────────────────────────────────────
-const macWindowButtonDefs: Array<{ action: 'close' | 'minimize' | 'maximize'; color: string; icon: React.ReactNode }> = [
-  { action: 'close', color: '#ff5f57', icon: <X size={9} strokeWidth={2.3} /> },
-  { action: 'minimize', color: '#febc2e', icon: <Minus size={9} strokeWidth={2.3} /> },
-  { action: 'maximize', color: '#28c840', icon: <Plus size={9} strokeWidth={2.3} /> },
-];
-
-const windowsMaximizeIcon = (
-  <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
-    <rect x="1.25" y="1.25" width="7.5" height="7.5" fill="none" stroke="currentColor" strokeWidth="1.2" shapeRendering="crispEdges" />
-  </svg>
-);
-
-// ─── Windows button data ────────────────────────────────────────────────────────
-type WinBtnAction = 'minimize' | 'maximize' | 'close';
-
-const winButtonDefs: Array<{ action: WinBtnAction }> = [
-  { action: 'minimize' },
-  { action: 'maximize' },
-  { action: 'close' },
-];
-
-const winButtonIcons: Record<WinBtnAction, React.ReactNode> = {
-  minimize: <Minus size={14} strokeWidth={2.1} />,
-  maximize: windowsMaximizeIcon,
-  close: <X size={14} strokeWidth={2.1} />,
-};
-
-// ─── Brand icon ─────────────────────────────────────────────────────────────────
-// Renders the app icon PNG loaded at runtime via IPC.
-// Reserves a fixed-size slot while loading to prevent layout shift.
-const BrandIcon: React.FC<{ dataUrl: string }> = ({ dataUrl }) => {
-  if (!dataUrl) {
-    return (
-      <Box
-        component="span"
-        aria-hidden="true"
-        w={18}
-        h={18}
-        display="inline-block"
-        style={brandIconEmptyStyle}
-      />
-    );
-  }
-  return (
-    <Box
-      component="img"
-      src={dataUrl}
-      w={18}
-      h={18}
-      draggable={false}
-      aria-hidden="true"
-      style={brandIconImgStyle}
-    />
-  );
-};
-
-// ─── Mac window controls ────────────────────────────────────────────────────────
-// Group hover is handled entirely by CSS: .macGroup:hover .macBtnIcon { opacity: 1 }
-// No useState needed — no hover state tracked in JS.
-const MacWindowControls = React.memo<{ t: (k: string) => string }>(({ t }) => (
-  <Box className={styles.macGroup} style={noDrag}>
-    {macWindowButtonDefs.map((btn) => (
-      <UnstyledButton
-        key={btn.action}
-        onClick={() => doWindowAction(btn.action)}
-        title={getWindowActionTitle(t, btn.action)}
-        className={styles.macBtn}
-        style={{ background: btn.color }}
-      >
-        <Box component="span" className={styles.macBtnIcon}>
-          {btn.icon}
-        </Box>
-      </UnstyledButton>
-    ))}
-  </Box>
-));
-
-// ─── Windows window controls ────────────────────────────────────────────────────
-// Hover effects handled entirely by CSS: .winBtn:hover and .winClose:hover
-// No useState needed — no hover state tracked in JS.
-const WindowsControls = React.memo<{ t: (k: string) => string }>(({ t }) => (
-  <Box className={styles.winControls} style={noDrag}>
-    {winButtonDefs.map(({ action }) => (
-      <UnstyledButton
-        key={action}
-        onClick={() => doWindowAction(action)}
-        title={getWindowActionTitle(t, action)}
-        className={`${styles.winBtn}${action === 'close' ? ` ${styles.winClose}` : ''}`}
-      >
-        {winButtonIcons[action]}
-      </UnstyledButton>
-    ))}
-  </Box>
-));
-
 export const TitleBar: React.FC = () => {
-  const { currentView, setView, status, queue } = useAppStore();
+  const { currentView, setView, status, queue, workerAttention } = useAppStore();
   const { t, locale } = useI18nStore();
   const hasUpdate = useUpdateStore((state) => state.hasUpdate);
-  const isTight = useMediaQuery('(max-width: 900px)', false, { getInitialValueInEffect: false }) ?? false;
+  const barRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
+  const tightThresholdRef = useRef(0);
+  const [isTight, setIsTight] = useState(false);
   const [queuePopoverOpen, setQueuePopoverOpen] = useState(false);
   const [cancelingTaskIds, setCancelingTaskIds] = useState<Record<string, boolean>>({});
+  const [isForceSkipping, setIsForceSkipping] = useState(false);
   const [appIconDataUrl, setAppIconDataUrl] = useState('');
   const [popoverPos, setPopoverPos] = useState<{ top: number; right: number }>({ top: 52, right: 6 });
   const queuePopoverCloseTimerRef = useRef<number | null>(null);
@@ -163,6 +44,34 @@ export const TitleBar: React.FC = () => {
       window.clearTimeout(queuePopoverCloseTimerRef.current);
     }
   }, []);
+
+  // Collapse nav/worker labels to icons only when they would actually overflow
+  // and overlap the status area — measured from real content fit (locale-aware),
+  // not a fixed viewport breakpoint. The brand text and window controls are
+  // flex-shrink:0 and are never affected. Hysteresis avoids flip-flopping.
+  useLayoutEffect(() => {
+    const bar = barRef.current;
+    const nav = navRef.current;
+    if (!bar || !nav) return;
+    const evaluate = (): void => {
+      const barWidth = bar.clientWidth;
+      if (!isTight) {
+        // Full labels: nav is allowed to shrink below its content, so content
+        // wider than the allotted width means the labels no longer fit.
+        if (nav.scrollWidth > nav.clientWidth + 2) {
+          tightThresholdRef.current = barWidth;
+          setIsTight(true);
+        }
+      } else if (barWidth > tightThresholdRef.current + 32) {
+        // Comfortably wider than where it broke — safe to show labels again.
+        setIsTight(false);
+      }
+    };
+    evaluate();
+    const observer = new ResizeObserver(evaluate);
+    observer.observe(bar);
+    return () => observer.disconnect();
+  }, [isTight, locale]);
 
   const navItems = useMemo(() => [
     { id: 'chat' as View, label: t('nav.chat'), icon: <MessageSquare size={13} /> },
@@ -222,6 +131,15 @@ export const TitleBar: React.FC = () => {
     }
   }, []);
 
+  const handleForceSkipActiveTask = useCallback(async (): Promise<void> => {
+    setIsForceSkipping(true);
+    try {
+      await window.electronAPI.forceSkipActiveTask();
+    } finally {
+      setIsForceSkipping(false);
+    }
+  }, []);
+
   const statusLabel = hasQueueItems
     ? isProcessing
       ? `${t('status.processing')} ${queue.current}/${queue.total}`
@@ -240,8 +158,24 @@ export const TitleBar: React.FC = () => {
     ? isProcessing ? 'rgba(210,153,34,0.32)' : 'rgba(56,139,253,0.35)'
     : 'rgba(63,185,80,0.32)';
 
+  // Worker-window quick access. The button is always visible; when the main
+  // process detects the worker needs the user (login / Cloudflare verification)
+  // it turns orange and swaps to a state-specific icon.
+  const workerNeedsAttention = workerAttention !== 'idle';
+  const workerIcon = workerAttention === 'login'
+    ? <LogIn size={15} />
+    : workerAttention === 'verification'
+      ? <ShieldAlert size={15} />
+      : <AppWindow size={15} />;
+  const workerTitle = workerAttention === 'login'
+    ? t('titlebar.worker.needLogin')
+    : workerAttention === 'verification'
+      ? t('titlebar.worker.needVerification')
+      : t('titlebar.worker.open');
+
   return (
     <Flex
+      ref={barRef}
       align="center"
       gap={0}
       className={styles.bar}
@@ -263,32 +197,60 @@ export const TitleBar: React.FC = () => {
         </Text>
       </Group>
 
-      <Flex gap={isTight ? 4 : 8} style={navScrollStyle}>
+      <Flex ref={navRef} gap={isTight ? 4 : 8} style={navScrollStyle}>
         {navItems.map((item) => (
           <Box key={item.id} pos="relative" display="inline-flex">
-            <MButton
-              onClick={() => setView(item.id)}
-              variant={currentView === item.id ? 'filled' : 'subtle'}
-              color={currentView === item.id ? undefined : 'gray'}
-              size="compact-xs"
-              radius={isTight ? 999 : 'xl'}
-              leftSection={!isTight ? item.icon : undefined}
-              h={32}
-              w={isTight ? 32 : undefined}
-              style={{
-                '--button-hover': currentView !== item.id ? 'var(--mantine-color-default-hover)' : undefined,
-                padding: isTight ? 0 : '6px 12px',
-                flexShrink: 0,
-                boxShadow: item.id === 'about' && hasUpdate && currentView !== 'about' ? '0 0 0 1px var(--mantine-color-orange-6)' : undefined,
-              } as React.CSSProperties}
-            >
-              {isTight ? item.icon : item.label}
-            </MButton>
+            {/* Tooltip only when the label is collapsed to an icon (tight layout). */}
+            <Tooltip label={item.label} position="bottom" openDelay={450} disabled={!isTight}>
+              <MButton
+                onClick={() => setView(item.id)}
+                variant={currentView === item.id ? 'filled' : 'subtle'}
+                color={currentView === item.id ? undefined : 'gray'}
+                size="compact-xs"
+                radius={isTight ? 999 : 'xl'}
+                leftSection={!isTight ? item.icon : undefined}
+                h={32}
+                w={isTight ? 32 : undefined}
+                style={{
+                  '--button-hover': currentView !== item.id ? 'var(--mantine-color-default-hover)' : undefined,
+                  padding: isTight ? 0 : '6px 12px',
+                  flexShrink: 0,
+                  boxShadow: item.id === 'about' && hasUpdate && currentView !== 'about' ? '0 0 0 1px var(--mantine-color-orange-6)' : undefined,
+                } as React.CSSProperties}
+              >
+                {isTight ? item.icon : item.label}
+              </MButton>
+            </Tooltip>
           </Box>
         ))}
       </Flex>
 
       <Box className={styles.spacer} />
+
+      <Box mr={6} style={statusWrapperStyle}>
+        {/* Label shows when wide; collapses to icon + hover tooltip when tight (mirrors nav buttons). */}
+        <Tooltip label={workerTitle} position="bottom" openDelay={450} disabled={!isTight}>
+          <MButton
+            onClick={() => systemApi.showWorker()}
+            aria-label={workerTitle}
+            variant={workerNeedsAttention ? 'light' : 'subtle'}
+            color={workerNeedsAttention ? 'orange' : 'gray'}
+            size="compact-xs"
+            radius={isTight ? 999 : 'xl'}
+            leftSection={!isTight ? workerIcon : undefined}
+            h={32}
+            w={isTight ? 32 : undefined}
+            style={{
+              '--button-hover': !workerNeedsAttention ? 'var(--mantine-color-default-hover)' : undefined,
+              padding: isTight ? 0 : '6px 12px',
+              flexShrink: 0,
+              boxShadow: workerNeedsAttention ? '0 0 0 1px var(--mantine-color-orange-6)' : undefined,
+            } as React.CSSProperties}
+          >
+            {isTight ? workerIcon : workerTitle}
+          </MButton>
+        </Tooltip>
+      </Box>
 
       {/* onMouseEnter/onMouseLeave here are functional (show/hide popover), not for styling */}
       <Box
@@ -328,66 +290,17 @@ export const TitleBar: React.FC = () => {
         </Group>
 
         {queuePopoverOpen && hasQueueItems && (
-          <Box
-            className={styles.popover}
-            style={{ top: popoverPos.top, right: popoverPos.right }}
+          <QueuePopover
+            pos={popoverPos}
+            items={queue.items}
+            cancelingTaskIds={cancelingTaskIds}
+            isForceSkipping={isForceSkipping}
+            onCancelTask={handleCancelQueueTask}
+            onForceSkip={handleForceSkipActiveTask}
             onMouseEnter={openQueuePopover}
             onMouseLeave={closeQueuePopoverSoon}
-            onMouseDown={(event) => event.stopPropagation()}
-          >
-            <Box className={styles.popoverHeader}>
-              <ListChecks size={16} style={{ flexShrink: 0 }} />
-              <Text component="span">
-                {t('queue.panel.title')}
-              </Text>
-            </Box>
-            <Box className={styles.popoverBody}>
-              {queue.items.map((item) => {
-                const isRunningItem = item.status === 'running';
-                const isCanceling = Boolean(cancelingTaskIds[item.id]);
-                return (
-                  <Box key={`${item.status}-${item.id}`} className={styles.queueItem}>
-                    <Box className={styles.queueItemHeader}>
-                      <Box className={styles.queueItemTitleWrapper}>
-                        <Text className={styles.queueItemTitle}>
-                          {item.promptSummary}
-                        </Text>
-                        <Text className={styles.queueItemId}>
-                          #{item.id}
-                        </Text>
-                      </Box>
-                      <Box
-                        className={`${styles.queueItemStatusBadge} ${isRunningItem ? styles.running : styles.queued}`}
-                      >
-                        {isRunningItem ? t('queue.item.running') : t('queue.item.queued')}
-                      </Box>
-                    </Box>
-                    {!isRunningItem && (
-                      <Box className={styles.queueItemAction} style={{ alignSelf: 'flex-end' }}>
-                        <MButton
-                          onClick={() => { void handleCancelQueueTask(item.id); }}
-                          disabled={isCanceling}
-                          variant="light"
-                          size="xs"
-                          color="red"
-                          leftSection={isCanceling ? <LoaderCircle size={12} /> : <X size={12} />}
-                          styles={{
-                            root: {
-                              height: 24,
-                              fontSize: 'var(--font-size-xs)',
-                              fontWeight: 600,
-                            },
-                          }}
-                        >
-                          {isCanceling ? t('queue.canceling') : t('queue.cancel')}
-                        </MButton>
-                      </Box>
-                    )}
-                  </Box>
-                );
-              })}
-            </Box>
-          </Box>
+            t={t}
+          />
         )}
       </Box>
 

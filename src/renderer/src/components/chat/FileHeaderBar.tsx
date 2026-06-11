@@ -1,6 +1,6 @@
 import React from 'react';
-import { ActionIcon, Box, Button, Flex, Group, Menu as MMenu, Stack, Text } from '@mantine/core';
-import { ChevronDown, Columns2, Copy, Download, FileText, FolderOpen, Menu, Minus, Pencil, Plus, Rows2, ZoomIn } from 'lucide-react';
+import { ActionIcon, Box, Button, Group, Menu as MMenu, Stack, Text } from '@mantine/core';
+import { ChevronDown, Copy, Download, FileText, FolderOpen, Menu, Minus, Pencil, Plus, ZoomIn } from 'lucide-react';
 import type { LayoutMode } from '../../store/appStore';
 import { AppTextInput } from '../AppTextInput';
 import { AppSegmentedControl } from '../AppSegmentedControl';

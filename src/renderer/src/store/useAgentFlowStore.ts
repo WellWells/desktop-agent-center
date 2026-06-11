@@ -10,75 +10,7 @@ import type {
   TriggerConfig,
 } from '../../../shared/types';
 import { flowApi } from '../api/electronApi';
-
-function createId(): string {
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
-
-function createDefaultStep(type: SkillType = 'shell', outputKey?: string, t: (key: string) => string = (k) => k): SkillInstance {
-  const id = createId();
-  const configMap: Record<SkillType, Record<string, string>> = {
-    shell: { command: '', windowsShell: 'cmd' },
-    browser: { url: '' },
-    llm: {
-      prompt: '',
-      provider: '',
-      saveToHistory: 'false',
-      exportFormat: '',
-      exportTitle: '',
-      exportFileName: '',
-      exportShowProvider: 'false',
-      exportShowTimestamp: 'false',
-    },
-    clipboard: { action: 'read', text: '' },
-    utility: { action: 'delay', delayMs: '1000', title: '', body: '', format: 'png', content: '' },
-    bot: { chatId: '', message: '' },
-    rss: { url: '', fetchContent: 'false', checkpoint: '', lastLinks: '' },
-    stop: { value: '' },
-    comment: { note: '' },
-    scraper: { url: '', itemSelector: '', titleSelector: '', linkSelector: '', maxItems: '5' },
-    loop: { input: '', loopVar: 'item', limitIterations: 'true', maxIterations: '5' },
-    end_loop: {},
-  };
-  const labelMap: Record<SkillType, string> = {
-    shell: t('agentflow.skill.shell'),
-    browser: t('agentflow.skill.browser'),
-    llm: t('agentflow.skill.llm'),
-    clipboard: t('agentflow.skill.clipboard'),
-    utility: t('agentflow.skill.utility'),
-    bot: t('agentflow.skill.bot'),
-    rss: t('agentflow.skill.rss'),
-    stop: t('agentflow.skill.stop'),
-    comment: t('agentflow.skill.comment'),
-    scraper: t('agentflow.skill.scraper'),
-    loop: t('agentflow.skill.loop'),
-    end_loop: t('agentflow.skill.end_loop'),
-  };
-  return {
-    id,
-    type,
-    label: labelMap[type],
-    config: configMap[type],
-    outputKey: outputKey ?? (type === 'comment' || type === 'end_loop' ? '' : `${type}_1`),
-  };
-}
-
-function createDefaultFlow(t: (key: string) => string = (k) => k): FlowDefinition {
-  return {
-    id: createId(),
-    name: t('agentflow.newFlow'),
-    description: t('agentflow.newFlow.desc'),
-    enabled: true,
-    trigger: { type: 'manual' },
-    steps: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-}
-
-function cloneFlow(flow: FlowDefinition): FlowDefinition {
-  return JSON.parse(JSON.stringify(flow)) as FlowDefinition;
-}
+import { cloneFlow, createDefaultFlow, createDefaultStep, createId, findMatchingMarker } from './flowHelpers';
 
 interface ActionState {
   flows: FlowDefinition[];
@@ -237,8 +169,9 @@ export const useAgentFlowStore = create<ActionState>((set, get) => ({
     const t = useI18nStore.getState().t;
     const flow = get().flows.find(f => f.id === flowId);
     const sameTypeCount = flow?.steps.filter(s => s.type === type).length ?? 0;
-    const outputKey = `${type}_${sameTypeCount + 1}`;
-    const step = createDefaultStep(type, outputKey, t);
+    // Block openers and end markers carry no reusable output key.
+    const isMarker = type === 'if' || type === 'end_if' || type === 'end_loop';
+    const step = createDefaultStep(type, isMarker ? undefined : `${type}_${sameTypeCount + 1}`, t);
     // Auto-populate previous array variable if type is 'loop'
     if (type === 'loop' && flow && flow.steps.length > 0) {
       const lastOutputStep = [...flow.steps].reverse().find(s => {
@@ -250,10 +183,21 @@ export const useAgentFlowStore = create<ActionState>((set, get) => ({
         step.config.input = `{{${lastOutputStep.outputKey}}}`;
       }
     }
+    // Block-opening skills auto-create their matching end marker so blocks stay balanced.
+    const newSteps: SkillInstance[] = [step];
+    if (type === 'loop') newSteps.push(createDefaultStep('end_loop', undefined, t));
+    else if (type === 'if') newSteps.push(createDefaultStep('end_if', undefined, t));
     set((state) => ({
-      flows: state.flows.map((f) =>
-        f.id === flowId ? { ...f, steps: [...f.steps, step] } : f,
-      ),
+      flows: state.flows.map((f) => {
+        if (f.id !== flowId) return f;
+        const steps = [...f.steps];
+        // If the flow currently ends with a block-end marker, insert the new step(s)
+        // just before it so steps added after a loop/if land inside that block.
+        const last = steps[steps.length - 1];
+        const insertAt = last && (last.type === 'end_loop' || last.type === 'end_if') ? steps.length - 1 : steps.length;
+        steps.splice(insertAt, 0, ...newSteps);
+        return { ...f, steps };
+      }),
     }));
     // Auto-save immediately so the new step persists if the flow is moved
     // before the user manually triggers a save.
@@ -263,9 +207,16 @@ export const useAgentFlowStore = create<ActionState>((set, get) => ({
 
   removeStep: (flowId, stepId) => {
     set((state) => ({
-      flows: state.flows.map((f) =>
-        f.id === flowId ? { ...f, steps: f.steps.filter((s) => s.id !== stepId) } : f,
-      ),
+      flows: state.flows.map((f) => {
+        if (f.id !== flowId) return f;
+        const idx = f.steps.findIndex((s) => s.id === stepId);
+        if (idx === -1) return f;
+        // Removing a block marker also removes its matching marker (delete the whole block).
+        const removeIds = new Set<string>([stepId]);
+        const matchIdx = findMatchingMarker(f.steps, idx);
+        if (matchIdx !== -1) removeIds.add(f.steps[matchIdx].id);
+        return { ...f, steps: f.steps.filter((s) => !removeIds.has(s.id)) };
+      }),
     }));
   },
 

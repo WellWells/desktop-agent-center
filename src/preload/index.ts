@@ -19,6 +19,7 @@ import type {
   TelegramSettingsSnapshot,
   UpdateAvailablePayload,
   UiNotificationPayload,
+  WorkerAttention,
 } from '../shared/types';
 
 export type ElectronAPI = {
@@ -36,6 +37,7 @@ export type ElectronAPI = {
   onFileListUpdate: (cb: (files: OutputFile[]) => void) => () => void;
   onUiNotification: (cb: (payload: UiNotificationPayload) => void) => () => void;
   onTelegramRuntime: (cb: (snapshot: TelegramRuntimeSnapshot) => void) => () => void;
+  onWorkerStatus: (cb: (state: WorkerAttention) => void) => () => void;
 
   // File operations
   getFileList: () => Promise<OutputFile[]>;
@@ -65,7 +67,6 @@ export type ElectronAPI = {
   onUpdateAvailable: (cb: (payload: UpdateAvailablePayload) => void) => () => void;
   onUpdateNotAvailable: (cb: () => void) => () => void;
   onUpdateError: (cb: () => void) => () => void;
-  openExternal: (url: string) => Promise<boolean>;
   openExternalUrl: (url: string) => Promise<boolean>;
   getAppVersion: () => Promise<string>;
   getAppIconDataUrl: () => Promise<string>;
@@ -87,6 +88,7 @@ export type ElectronAPI = {
   triggerPrompt: (prompt: string) => void;
   triggerPromptWithOptions: (options: PromptTriggerOptions) => Promise<string | null>;
   cancelQueueTask: (taskId: string) => Promise<boolean>;
+  forceSkipActiveTask: () => Promise<boolean>;
   setCurrentLocale: (lang: string) => Promise<boolean>;
 
   // System
@@ -172,9 +174,9 @@ export type ElectronAPI = {
 const api: ElectronAPI = {
   showWorker: () => ipcRenderer.send(IPC.SHOW_WORKER),
   hideWorker: () => ipcRenderer.send(IPC.HIDE_WORKER),
-  minimizeWindow: () => ipcRenderer.send('window:minimize'),
-  maximizeWindow: () => ipcRenderer.send('window:maximize'),
-  closeWindow: () => ipcRenderer.send('window:close'),
+  minimizeWindow: () => ipcRenderer.send(IPC.WINDOW_MINIMIZE),
+  maximizeWindow: () => ipcRenderer.send(IPC.WINDOW_MAXIMIZE),
+  closeWindow: () => ipcRenderer.send(IPC.WINDOW_CLOSE),
 
   onLog: (cb) => {
     const handler = (_: Electron.IpcRendererEvent, msg: string) => cb(msg);
@@ -205,6 +207,11 @@ const api: ElectronAPI = {
     const handler = (_: Electron.IpcRendererEvent, snapshot: TelegramRuntimeSnapshot) => cb(snapshot);
     ipcRenderer.on(IPC.TELEGRAM_RUNTIME, handler);
     return () => ipcRenderer.removeListener(IPC.TELEGRAM_RUNTIME, handler);
+  },
+  onWorkerStatus: (cb) => {
+    const handler = (_: Electron.IpcRendererEvent, state: WorkerAttention) => cb(state);
+    ipcRenderer.on(IPC.WORKER_STATUS, handler);
+    return () => ipcRenderer.removeListener(IPC.WORKER_STATUS, handler);
   },
 
   getFileList: () => ipcRenderer.invoke(IPC.GET_FILE_LIST),
@@ -243,7 +250,6 @@ const api: ElectronAPI = {
     ipcRenderer.on(IPC.UPDATE_ERROR, handler);
     return () => ipcRenderer.removeListener(IPC.UPDATE_ERROR, handler);
   },
-  openExternal: (url) => ipcRenderer.invoke(IPC.OPEN_EXTERNAL_URL, url),
   openExternalUrl: (url) => ipcRenderer.invoke(IPC.OPEN_EXTERNAL_URL, url),
   getAppVersion: () => ipcRenderer.invoke(IPC.GET_APP_VERSION),
   getAppIconDataUrl: () => ipcRenderer.invoke(IPC.GET_APP_ICON_DATA_URL),
@@ -263,6 +269,7 @@ const api: ElectronAPI = {
   triggerPrompt: (prompt) => ipcRenderer.send(IPC.TRIGGER_PROMPT, prompt),
   triggerPromptWithOptions: (options) => ipcRenderer.invoke(IPC.TRIGGER_PROMPT_WITH_OPTIONS, options),
   cancelQueueTask: (taskId) => ipcRenderer.invoke(IPC.CANCEL_QUEUE_TASK, taskId),
+  forceSkipActiveTask: () => ipcRenderer.invoke(IPC.FORCE_SKIP_ACTIVE_TASK),
   setCurrentLocale: (lang) => ipcRenderer.invoke(IPC.SET_CURRENT_LOCALE, lang),
 
   copyTextToClipboard: (text) => ipcRenderer.invoke(IPC.COPY_TEXT_TO_CLIPBOARD, text),

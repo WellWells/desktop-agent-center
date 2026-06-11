@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box, Text } from '@mantine/core';
 
 interface ExtraBlockProps {
   heading: string;
@@ -7,8 +8,8 @@ interface ExtraBlockProps {
 }
 
 export const ExtraBlock = React.memo<ExtraBlockProps>(({ heading, content, MarkdownRenderer }) => (
-  <div style={{ marginBottom: 12 }}>
-    <div style={{
+  <Box mb={12}>
+    <Text style={{
       fontSize: 'var(--font-size-base)',
       fontWeight: 600,
       color: 'var(--text-muted)',
@@ -17,10 +18,10 @@ export const ExtraBlock = React.memo<ExtraBlockProps>(({ heading, content, Markd
       paddingLeft: 8,
     }}>
       {heading}
-    </div>
-    <div className="md-content" style={{ userSelect: 'text', fontSize: 'var(--font-size-md)' }}>
+    </Text>
+    <Box className="md-content" style={{ userSelect: 'text', fontSize: 'var(--font-size-md)' }}>
       <MarkdownRenderer>{content}</MarkdownRenderer>
-    </div>
-  </div>
+    </Box>
+  </Box>
 ));
 

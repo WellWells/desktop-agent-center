@@ -1,8 +1,10 @@
 // src/main/providers/chatgpt.ts — Electron DOM-injection automation for ChatGPT web
 import type { BrowserWindow } from 'electron';
-import { navigateAndWait, INJECTED_SLEEP_JS, INJECTED_WAIT_FOR_JS, INJECTED_INTERCEPT_COPY_JS } from './common';
+import { navigateAndWait, sleep, INJECTED_SLEEP_JS, INJECTED_WAIT_FOR_JS, INJECTED_INTERCEPT_COPY_JS } from './common';
+import { executeAutomationWithTimeout, countElements, dispatchFocusEvents } from './automationExecutor';
 import { isExpiredCookie } from '../helpers';
 import { PROVIDER_URLS } from '../../shared/types';
+import { CLEAN_UA } from '../userAgent';
 
 const CHATGPT_HOME = PROVIDER_URLS.chatgpt;
 export const CHATGPT_LOGIN_URL = 'https://auth.openai.com/log-in-or-create-account';
@@ -83,6 +85,31 @@ function isLoginRequiredFromSignals(
   return false;
 }
 
+// Poll for the composer textarea to appear after React hydration.
+// Times out gracefully — the caller still runs auth checks and decides.
+async function waitForChatgptComposerOrTimeout(
+  wc: import('electron').WebContents,
+  maxWaitMs = 8_000,
+): Promise<void> {
+  const POLL_MS = 300;
+  const deadline = Date.now() + maxWaitMs;
+  while (Date.now() < deadline) {
+    try {
+      const found = await wc.executeJavaScript(
+        `Boolean(
+          document.querySelector('#prompt-textarea[contenteditable="true"]') ||
+          document.querySelector('form[data-type="unified-composer"] #prompt-textarea')
+        )`,
+        false,
+      ) as boolean;
+      if (found) return;
+    } catch {
+      // page navigating — keep polling
+    }
+    await sleep(POLL_MS);
+  }
+}
+
 export async function runChatgptAutomation(
   workerWin: BrowserWindow,
   prompt: string,
@@ -91,7 +118,16 @@ export async function runChatgptAutomation(
 ): Promise<{ response: string; title: string }> {
   const wc = workerWin.webContents;
 
+  // Restore Chrome UA — Cloudflare expects a real Chrome browser fingerprint.
+  wc.setUserAgent(CLEAN_UA);
+
   await navigateAndWait(wc, targetUrl);
+
+  // ChatGPT is a React SPA — did-finish-load fires when the initial HTML is
+  // parsed, but the composer textarea is rendered asynchronously by React.
+  // Waiting here prevents a false "login required" detection when hasComposer
+  // is checked before the component tree has mounted.
+  await waitForChatgptComposerOrTimeout(wc);
 
   const authSignals = await getChatgptAuthSignals(workerWin);
   const pageSignals = await getChatgptPageSignals(workerWin);
@@ -102,39 +138,17 @@ export async function runChatgptAutomation(
     );
   }
 
-  await wc.executeJavaScript(`
-    window.dispatchEvent(new FocusEvent('focus', { bubbles: false }));
-    document.dispatchEvent(new FocusEvent('focus', { bubbles: true }));
-  `, false);
+  await dispatchFocusEvents(wc);
 
-  let baseline = 0;
-  try {
-    baseline = await wc.executeJavaScript(
-      `document.querySelectorAll('[data-message-author-role="assistant"]').length`,
-      false,
-    );
-  } catch {
-    baseline = 0;
-  }
+  const baseline = await countElements(wc, '[data-message-author-role="assistant"]');
 
   const autoScript = buildChatgptAutomationScript(prompt, baseline, timeoutMs);
-
-  let nodeTimeoutId!: ReturnType<typeof setTimeout>;
-  const nodeTimeout = new Promise<never>((_, reject) => {
-    nodeTimeoutId = setTimeout(
-      () => reject(new Error('ChatGPT automation timed out (Node side)')),
-      Math.max(timeoutMs * 5, 300_000),
-    );
-  });
-
-  let result: { response: string; title: string };
-  try {
-    result = await Promise.race([wc.executeJavaScript(autoScript, true), nodeTimeout]);
-  } catch (err: unknown) {
-    throw new Error(`ChatGPT automation failed: ${(err as Error).message}`);
-  } finally {
-    clearTimeout(nodeTimeoutId);
-  }
+  const result = await executeAutomationWithTimeout<{ response: string; title: string }>(
+    wc,
+    autoScript,
+    timeoutMs,
+    'ChatGPT',
+  );
 
   if (!result || !result.response || result.response.trim() === '') {
     throw new Error('ChatGPT returned empty response');

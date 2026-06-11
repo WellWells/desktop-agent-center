@@ -8,6 +8,8 @@ export class QueueManager {
   private running = false;
   private activeTask: Task | null = null;
   private listener: QueueListener | null = null;
+  // Resolving this function causes drain() to abandon the active task and move on.
+  private skipCurrentTask: (() => void) | null = null;
   // Hard upper bound per task regardless of provider-level timeouts.
   // Prevents the queue from permanently blocking on a hung Promise.
   private readonly TASK_HARD_TIMEOUT_MS = 10 * 60_000;
@@ -33,6 +35,16 @@ export class QueueManager {
     if (index < 0) return false;
     this.queue.splice(index, 1);
     this.notify();
+    return true;
+  }
+
+  /**
+   * Force-abandon the currently running task and immediately drain the next queued item.
+   * The abandoned worker promise continues in the background but its result is discarded.
+   */
+  forceSkipActive(): boolean {
+    if (!this.running || !this.skipCurrentTask) return false;
+    this.skipCurrentTask();
     return true;
   }
 
@@ -88,7 +100,13 @@ export class QueueManager {
             this.TASK_HARD_TIMEOUT_MS,
           );
         });
-        await Promise.race([this.worker(task), hardTimeout]).finally(() => clearTimeout(hardTimeoutId));
+        const skipSignal = new Promise<void>((resolve) => {
+          this.skipCurrentTask = resolve;
+        });
+        await Promise.race([this.worker(task), hardTimeout, skipSignal]).finally(() => {
+          clearTimeout(hardTimeoutId);
+          this.skipCurrentTask = null;
+        });
       } catch {
         // errors are handled inside worker; keep draining
       }

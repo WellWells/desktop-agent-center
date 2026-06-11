@@ -1,10 +1,9 @@
 import React from 'react';
 import { Box, Group, Stack, Text, Button as MButton } from '@mantine/core';
-import { Download, FolderOpen, LogIn, RotateCcw, ShieldAlert, Trash2, Upload } from 'lucide-react';
+import { Download, FolderOpen, RotateCcw, ShieldAlert, Trash2, Upload } from 'lucide-react';
 import { SectionCard, GroupHeader, SectionTitle } from '../components';
 import { WebDialog } from '../../../components/WebDialog';
 import { TAG_SETS } from '../hooks/useSettingsNav';
-import { systemApi } from '../../../api/electronApi';
 
 export type DangerAction = 'reset' | 'clear-history' | null;
 
@@ -32,40 +31,6 @@ export const SystemSection: React.FC<Props> = ({
   return (
     <Box>
       {isSearching && <GroupHeader label={t('settings.group.system')} />}
-
-      {/* ─ Runtime Window ─ */}
-      <Box display={showSection(TAG_SETS.runtime, 'system') ? 'block' : 'none'}>
-        <SectionCard style={{ marginBottom: sectionGap }}>
-          <SectionTitle icon={<LogIn size={15} />} label={t('settings.runtimeWindow.title')} />
-          <Text fz="var(--font-size-base)" mt={0} mb={8} c="dimmed" lh={1.75}>
-            {t('settings.runtimeWindow.shortHint')}
-          </Text>
-          <Text
-            fz="var(--font-size-sm)"
-            c="dimmed"
-            lh={1.7}
-            mb={10}
-            p="8px 12px"
-            bg="var(--mantine-color-bg-tertiary)"
-            style={{
-              borderRadius: 'var(--radius-sm)',
-              borderLeft: '3px solid var(--mantine-color-default-border)',
-            }}
-          >
-            {t('settings.runtimeWindow.hint')}
-          </Text>
-          <MButton
-            variant="default"
-            leftSection={<LogIn size={14} />}
-            onClick={() => systemApi.showWorker()}
-          >
-            {t('settings.runtimeWindow.openBtn')}
-          </MButton>
-          <Text fz="var(--font-size-sm)" mt={8} mb={0} c="dimmed" lh={1.6}>
-            {t('settings.runtimeWindow.behaviorHint')}
-          </Text>
-        </SectionCard>
-      </Box>
 
       {/* ─ Configuration ─ */}
       <Box display={showSection(TAG_SETS.config, 'system') ? 'block' : 'none'}>

@@ -1,6 +1,5 @@
 // src/main/telegramBridge.ts — Telegram settings snapshot & status helpers
 import type {
-  TelegramPairingState,
   TelegramRuntimeSnapshot,
   TelegramSettingsSnapshot,
 } from '../shared/types';
@@ -9,7 +8,7 @@ import { config, saveConfig } from './config';
 import { maskToken, sendLog } from './helpers';
 import { getLangCache, localizeUserFacingError, t } from './i18n';
 import { captureMarkdownDocument, buildCaptureSummary } from './capture';
-import { buildSafeFileNameFromTitle, buildSnapshotFileName, getOutputDir, getUniquePath } from './files';
+import { buildSafeFileNameFromTitle, getOutputDir, getUniquePath } from './files';
 import type { QueueManager } from './queueManager';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';

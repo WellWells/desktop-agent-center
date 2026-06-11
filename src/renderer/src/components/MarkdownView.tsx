@@ -1,4 +1,5 @@
 import React, { useDeferredValue, useRef } from 'react';
+import { Box } from '@mantine/core';
 import ReactMarkdown from 'react-markdown';
 import 'katex/dist/katex.min.css';
 import type { MarkdownBlocks } from '../utils/parseMarkdownBlocks';
@@ -81,7 +82,7 @@ function MarkdownViewInner({ content, blocks, headerAction }: MarkdownViewProps)
   const showMetaColumn = !isSideBySide || hasMetaContent;
 
   const MetaColumn = (
-    <div style={{
+    <Box style={{
       display: 'flex',
       flexDirection: 'column',
       gap: 0,
@@ -130,11 +131,11 @@ function MarkdownViewInner({ content, blocks, headerAction }: MarkdownViewProps)
       {Object.entries(deferredBlocks.extra).map(([heading, body]) => (
         <ExtraBlock key={heading} heading={heading} content={body} MarkdownRenderer={MD} />
       ))}
-    </div>
+    </Box>
   );
 
   const ResponseColumn = (
-    <div style={{
+    <Box style={{
       flex: 1,
       minHeight: 0,
       overflowY: isSideBySide ? 'auto' : undefined,
@@ -144,16 +145,16 @@ function MarkdownViewInner({ content, blocks, headerAction }: MarkdownViewProps)
       {deferredBlocks.response ? (
         <ResponseBlock response={deferredBlocks.response} MarkdownRenderer={MD} />
       ) : (
-        <div className="md-content" style={{ userSelect: 'text', fontSize: 'var(--font-size-md)', lineHeight: 1.75 }}>
+        <Box className="md-content" style={{ userSelect: 'text', fontSize: 'var(--font-size-md)', lineHeight: 1.75 }}>
           <MD>{deferredContent}</MD>
-        </div>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 
   if (isSideBySide) {
     return (
-      <div style={{
+      <Box style={{
         display: 'flex',
         flexDirection: 'row',
         height: '100%',
@@ -161,7 +162,7 @@ function MarkdownViewInner({ content, blocks, headerAction }: MarkdownViewProps)
         opacity: isStale ? 0.6 : 1,
         transition: 'opacity 0.15s ease',
       }}>
-        <div style={{
+        <Box style={{
           display: 'flex',
           flexDirection: 'row',
           flexShrink: 0,
@@ -172,19 +173,19 @@ function MarkdownViewInner({ content, blocks, headerAction }: MarkdownViewProps)
         }}>
           {showMetaColumn && MetaColumn}
           {ResponseColumn}
-        </div>
-      </div>
+        </Box>
+      </Box>
     );
   }
 
   return (
-    <div style={{
+    <Box style={{
       minHeight: '100%',
       overflow: 'hidden',
       opacity: isStale ? 0.6 : 1,
       transition: 'opacity 0.15s ease',
     }}>
-      <div
+      <Box
         ref={innerRef}
         style={{
           width: `${(1 / zoomScale) * 100}%`,
@@ -192,13 +193,13 @@ function MarkdownViewInner({ content, blocks, headerAction }: MarkdownViewProps)
           transformOrigin: 'top left',
         }}
       >
-        <div style={{ width: '100%', maxWidth: STACKED_MAX_WIDTH, margin: '0 auto' }}>
+        <Box style={{ width: '100%', maxWidth: STACKED_MAX_WIDTH, margin: '0 auto' }}>
           {showMetaColumn && MetaColumn}
           {ResponseColumn}
-        </div>
-      </div>
-      {spacerHeight > 0 && <div style={{ height: spacerHeight, flexShrink: 0 }} />}
-    </div>
+        </Box>
+      </Box>
+      {spacerHeight > 0 && <Box style={{ height: spacerHeight, flexShrink: 0 }} />}
+    </Box>
   );
 }
 

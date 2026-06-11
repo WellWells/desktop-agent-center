@@ -97,6 +97,15 @@ export const LlmConfig: React.FC<SkillConfigProps> = ({ step, onChange, t }) => 
       checked={step.config.saveToHistory === 'true'}
       onChange={(e) => onChange({ ...step.config, saveToHistory: e.currentTarget.checked ? 'true' : 'false' })}
     />
+    <ToggleSwitch
+      label={t('agentflow.skill.llm.emitFailFlag')}
+      size="sm"
+      checked={step.config.emitFailFlag === 'true'}
+      onChange={(e) => onChange({ ...step.config, emitFailFlag: e.currentTarget.checked ? 'true' : 'false' })}
+    />
+    {step.config.emitFailFlag === 'true' && (
+      <Text fz="xs" c="dimmed">{t('agentflow.skill.llm.emitFailFlag.hint')}</Text>
+    )}
   </Stack>
   );
 };

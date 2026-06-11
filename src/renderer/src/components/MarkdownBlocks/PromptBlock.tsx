@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { Box, Group, Text, UnstyledButton } from '@mantine/core';
 import { PencilLine } from 'lucide-react';
 
 interface PromptBlockProps {
@@ -41,7 +42,7 @@ export const PromptBlock = React.memo<PromptBlockProps>(({
   const displayPrompt = needsClamp && !expanded ? previewPrompt : normalizedPrompt;
 
   return (
-    <div style={{
+    <Box style={{
       background: 'var(--bg-tertiary)',
       border: '1px solid var(--border)',
       borderRadius: 'var(--radius)',
@@ -49,22 +50,23 @@ export const PromptBlock = React.memo<PromptBlockProps>(({
       marginBottom: 12,
       position: 'relative',
     }}>
-      <div style={{
-        fontSize: 'var(--font-size-xs)',
-        fontWeight: 700,
-        color: 'var(--text-muted)',
-        textTransform: 'uppercase',
-        letterSpacing: '0.8px',
-        marginBottom: 6,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 5,
-      }}>
+      <Group
+        gap={5}
+        align="center"
+        style={{
+          fontSize: 'var(--font-size-xs)',
+          fontWeight: 700,
+          color: 'var(--text-muted)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.8px',
+          marginBottom: 6,
+        }}
+      >
         <PencilLine size={12} />
         {label}
-      </div>
+      </Group>
 
-      <div
+      <Box
         className="md-content md-prompt"
         style={{
           overflow: expanded ? 'auto' : 'hidden',
@@ -79,27 +81,24 @@ export const PromptBlock = React.memo<PromptBlockProps>(({
         } as React.CSSProperties}
       >
         {displayPrompt}
-      </div>
+      </Box>
 
       {needsClamp && !expanded && (
-        <div style={{
+        <Text style={{
           marginTop: 6,
           fontSize: 'var(--font-size-sm)',
           color: 'var(--text-muted)',
           fontStyle: 'italic',
         }}>
           {truncatedHint}
-        </div>
+        </Text>
       )}
 
       {needsClamp && (
-        <button
+        <UnstyledButton
           onClick={() => setExpanded((value) => !value)}
           style={{
             marginTop: 6,
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
             fontSize: 'var(--font-size-sm)',
             color: 'var(--accent)',
             padding: '2px 0',
@@ -107,9 +106,9 @@ export const PromptBlock = React.memo<PromptBlockProps>(({
           }}
         >
           {expanded ? collapseText : expandText}
-        </button>
+        </UnstyledButton>
       )}
-    </div>
+    </Box>
   );
 });
 

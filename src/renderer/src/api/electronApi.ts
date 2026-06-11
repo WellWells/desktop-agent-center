@@ -18,6 +18,7 @@ import type {
   TelegramSettingsSnapshot,
   UpdateAvailablePayload,
   UiNotificationPayload,
+  WorkerAttention,
 } from '../../../shared/types';
 
 export const fileApi = {
@@ -102,7 +103,7 @@ export const updateApi = {
   onUpdateAvailable: (cb: (payload: UpdateAvailablePayload) => void) => window.electronAPI.onUpdateAvailable(cb),
   onUpdateNotAvailable: (cb: () => void) => window.electronAPI.onUpdateNotAvailable(cb),
   onUpdateError: (cb: () => void) => window.electronAPI.onUpdateError(cb),
-  openExternal: (url: string): Promise<boolean> => window.electronAPI.openExternal(url),
+  openExternal: (url: string): Promise<boolean> => window.electronAPI.openExternalUrl(url),
 };
 
 export const systemApi = {
@@ -132,6 +133,8 @@ export const ipcEvents = {
   onFileListUpdate: (cb: (files: OutputFile[]) => void) => window.electronAPI.onFileListUpdate(cb),
   onUiNotification: (cb: (payload: UiNotificationPayload) => void) =>
     window.electronAPI.onUiNotification(cb),
+  onWorkerStatus: (cb: (state: WorkerAttention) => void) =>
+    window.electronAPI.onWorkerStatus(cb),
   onNavigateSettings: (cb: () => void) => window.electronAPI.onNavigateSettings(cb),
   onShowCloseDialog: (cb: () => void) => window.electronAPI.onShowCloseDialog(cb),
   onNotifyOnCompleteChanged: (cb: (enabled: boolean) => void) =>

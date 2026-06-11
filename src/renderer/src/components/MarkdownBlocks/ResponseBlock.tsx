@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box } from '@mantine/core';
 
 interface ResponseBlockProps {
   response: string;
@@ -6,7 +7,7 @@ interface ResponseBlockProps {
 }
 
 export const ResponseBlock = React.memo<ResponseBlockProps>(({ response, MarkdownRenderer }) => (
-  <div
+  <Box
     className="md-content md-response"
     style={{
       flex: 1,
@@ -17,6 +18,6 @@ export const ResponseBlock = React.memo<ResponseBlockProps>(({ response, Markdow
     }}
   >
     <MarkdownRenderer>{response}</MarkdownRenderer>
-  </div>
+  </Box>
 ));
 

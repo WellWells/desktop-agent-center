@@ -1,4 +1,5 @@
 import React from 'react';
+import { Box, Group, Text } from '@mantine/core';
 import { Clock3 } from 'lucide-react';
 import dayjs from 'dayjs';
 
@@ -20,18 +21,19 @@ function formatDisplayTime(raw: string): string {
 export const TimeBlock = React.memo<TimeBlockProps>(({ time, provider, action }) => {
   const displayTime = formatDisplayTime(time);
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      flexWrap: 'wrap',
-      gap: 6,
-      padding: '4px 0 10px',
-      color: 'var(--text-muted)',
-      fontSize: 'var(--font-size-sm)',
-      userSelect: 'text',
-    }}>
+    <Group
+      gap={6}
+      align="center"
+      wrap="wrap"
+      style={{
+        padding: '4px 0 10px',
+        color: 'var(--text-muted)',
+        fontSize: 'var(--font-size-sm)',
+        userSelect: 'text',
+      }}
+    >
       {provider && (
-        <div style={{
+        <Box style={{
           width: 'fit-content',
           fontSize: 'var(--font-size-xs)',
           fontWeight: 700,
@@ -43,12 +45,12 @@ export const TimeBlock = React.memo<TimeBlockProps>(({ time, provider, action })
           letterSpacing: 0.2,
         }}>
           {provider}
-        </div>
+        </Box>
       )}
       {displayTime && (
         <>
           <Clock3 size={13} style={{ opacity: 0.75, marginTop: 1 }} />
-          <span style={{
+          <Text span style={{
             fontFamily: 'var(--font-mono)',
             letterSpacing: '0.4px',
             whiteSpace: 'normal',
@@ -56,15 +58,15 @@ export const TimeBlock = React.memo<TimeBlockProps>(({ time, provider, action })
             overflowWrap: 'anywhere',
           }}>
             {displayTime}
-          </span>
+          </Text>
         </>
       )}
       {action && (
-        <div style={{ marginLeft: 10, display: 'inline-flex', alignItems: 'center' }}>
+        <Box style={{ marginLeft: 10, display: 'inline-flex', alignItems: 'center' }}>
           {action}
-        </div>
+        </Box>
       )}
-    </div>
+    </Group>
   );
 });
 

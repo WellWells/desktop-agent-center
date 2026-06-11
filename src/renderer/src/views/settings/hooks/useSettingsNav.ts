@@ -14,7 +14,6 @@ export const TAG_SETS = {
   timeout: ['timeout', 'timer', 'response', 'time'],
   prompt: ['prompt', 'persona', 'template', 'tone', 'length', 'nickname'],
   telegram: ['telegram', 'bot', 'token', 'pairing', 'group'],
-  runtime: ['runtime', 'login', 'worker', 'browser', 'window'],
   config: ['config', 'configuration', 'backup', 'restore', 'import', 'export', 'json', 'folder', 'directory'],
   update: ['update', 'version', 'release', 'download', 'upgrade'],
   danger: ['danger', 'reset', 'clear', 'delete', 'restore'],
@@ -25,7 +24,7 @@ const CATEGORY_TAG_MAP: Record<Category, (keyof typeof TAG_SETS)[]> = {
   general: ['hotkey', 'language', 'notify', 'theme', 'tray'],
   ai: ['timeout', 'prompt'],
   telegram: ['telegram'],
-  system: ['runtime', 'config', 'danger'],
+  system: ['config', 'danger'],
 };
 
 export function useSettingsNav() {

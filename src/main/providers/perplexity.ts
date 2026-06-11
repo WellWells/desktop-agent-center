@@ -1,10 +1,12 @@
 // src/main/providers/perplexity.ts — Electron DOM-injection automation for Perplexity web
 import type { BrowserWindow } from 'electron';
 import { navigateAndWait, isCloudflareChallengeActive, INJECTED_SLEEP_JS, INJECTED_WAIT_FOR_JS, INJECTED_INTERCEPT_COPY_JS } from './common';
-import { sendLog, sendWebNotification } from '../helpers';
+import { executeAutomationWithTimeout, countElements, dispatchFocusEvents } from './automationExecutor';
+import { sendLog, sendWebNotification, setWorkerAttention } from '../helpers';
 import { showInteractiveWorkerWindow } from '../windows';
 import { getLangCache, t } from '../i18n';
 import { PROVIDER_URLS } from '../../shared/types';
+import { CLEAN_UA } from '../userAgent';
 
 export const PERPLEXITY_CLOUDFLARE_ERROR_NAME = 'PerplexityCloudflareChallengeError';
 
@@ -16,12 +18,18 @@ export async function runPerplexityAutomation(
 ): Promise<{ response: string; title: string }> {
   const wc = workerWin.webContents;
 
+  // Restore Chrome UA — Cloudflare expects a real Chrome browser fingerprint.
+  wc.setUserAgent(CLEAN_UA);
+
   await navigateAndWait(wc, targetUrl);
 
   // Detect a Cloudflare challenge and fail immediately — do not block the queue waiting for resolution.
   if (await isCloudflareChallengeActive(wc)) {
     const strings = getLangCache();
     await showInteractiveWorkerWindow(targetUrl);
+    // Flag attention AFTER reveal (which clears to 'idle') so the title-bar
+    // button keeps signaling "needs verification" until the user opens it again.
+    setWorkerAttention('verification');
     sendWebNotification(
       t(strings, 'cloudflare.notify.title'),
       t(strings, 'cloudflare.notify.body'),
@@ -37,40 +45,17 @@ export async function runPerplexityAutomation(
     throw error;
   }
 
-  await wc.executeJavaScript(`
-    window.dispatchEvent(new FocusEvent('focus', { bubbles: false }));
-    document.dispatchEvent(new FocusEvent('focus', { bubbles: true }));
-  `, false);
+  await dispatchFocusEvents(wc);
 
   // Baseline: count existing response nodes before sending
-  let baseline = 0;
-  try {
-    baseline = await wc.executeJavaScript(
-      `document.querySelectorAll('[id^="markdown-content-"]').length`,
-      false,
-    );
-  } catch {
-    baseline = 0;
-  }
+  const baseline = await countElements(wc, '[id^="markdown-content-"]');
 
   const autoScript = buildPerplexityAutomationScript(prompt, baseline, timeoutMs);
-
-  let nodeTimeoutId!: ReturnType<typeof setTimeout>;
-  const nodeTimeout = new Promise<never>((_, reject) => {
-    nodeTimeoutId = setTimeout(
-      () => reject(new Error('Perplexity automation timed out (Node side)')),
-      Math.max(timeoutMs * 5, 300_000),
-    );
-  });
-
-  let result: { response: string; title: string; isImageOnly?: boolean };
-  try {
-    result = await Promise.race([wc.executeJavaScript(autoScript, true), nodeTimeout]);
-  } catch (err: unknown) {
-    throw new Error(`Perplexity automation failed: ${(err as Error).message}`);
-  } finally {
-    clearTimeout(nodeTimeoutId);
-  }
+  const result = await executeAutomationWithTimeout<{
+    response: string;
+    title: string;
+    isImageOnly?: boolean;
+  }>(wc, autoScript, timeoutMs, 'Perplexity');
 
   if (!result || typeof result.response !== 'string') {
     throw new Error('Perplexity returned empty response');

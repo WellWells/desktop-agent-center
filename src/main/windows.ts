@@ -2,7 +2,7 @@
 import { app, BrowserWindow, nativeImage } from 'electron';
 import * as path from 'node:path';
 import { existsSync } from 'node:fs';
-import { sendLog, sendWebNotification, getAssetPath } from './helpers';
+import { sendLog, sendWebNotification, getAssetPath, setWorkerAttention } from './helpers';
 import { getLangCache, t } from './i18n';
 import { CLEAN_UA } from './userAgent';
 
@@ -214,6 +214,8 @@ export function revealWorkerWindow(): void {
   workerWin.focus();
   if (!app.isPackaged) workerWin.webContents.openDevTools({ mode: 'detach' });
   rememberWorkerVisibleBounds();
+  // User is now looking at the worker window — clear any attention indicator.
+  setWorkerAttention('idle');
 }
 
 export function hideWorkerWindow(): void {
@@ -269,6 +271,7 @@ export async function showInteractiveWorkerWindow(targetUrl: string): Promise<Br
 export async function showLoginWindowIfNeeded(providerLabel: string, targetUrl: string, _initialUrl: string): Promise<void> {
   const win = await showInteractiveWorkerWindow(targetUrl);
   if (!win) return;
+  setWorkerAttention('login');
   sendLog(`🔐 ${providerLabel} requires login — complete sign-in in the opened window`);
   const strings = getLangCache();
   sendWebNotification(

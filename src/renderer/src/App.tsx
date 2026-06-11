@@ -9,14 +9,12 @@ import { AboutView } from './views/AboutView';
 import { LogView } from './views/LogView';
 import { AgentFlowView } from './views/AgentFlowView';
 import { useAppStore } from './store/appStore';
-import { useThemeStore } from './store/themeStore';
 import { useI18nStore } from './store/i18nStore';
 import { useAppBootstrap } from './hooks/useAppBootstrap';
 import { ipcEvents, windowApi } from './api/electronApi';
 
 export const App: React.FC = () => {
   const { currentView } = useAppStore();
-  const { theme } = useThemeStore();
   const { isReady, t } = useI18nStore();
   const [showCloseDialog, setShowCloseDialog] = useState(false);
   const [closeRemember, setCloseRemember] = useState(false);

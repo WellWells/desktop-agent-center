@@ -1,7 +1,7 @@
 // src/main/capture.ts — Markdown document capture (PNG, WEBP, PDF)
 import { app, BrowserWindow } from 'electron';
 import * as path from 'node:path';
-import type { MarkdownCaptureRequest, MarkdownCaptureResult, CaptureFormat, CaptureMode } from '../shared/types';
+import type { MarkdownCaptureRequest, CaptureFormat, CaptureMode } from '../shared/types';
 import { sendLog } from './helpers';
 
 /** Overall timeout for the entire capture operation (ms). */

@@ -1,7 +1,9 @@
 // src/main/providers/gemini.ts — Electron DOM-injection automation for Gemini web
 import type { BrowserWindow } from 'electron';
 import { sleep, navigateAndWait, INJECTED_SLEEP_JS, INJECTED_WAIT_FOR_JS, INJECTED_INTERCEPT_COPY_JS } from './common';
+import { executeAutomationWithTimeout, countElements } from './automationExecutor';
 import { PROVIDER_URLS } from '../../shared/types';
+import { FIREFOX_UA } from '../userAgent';
 
 export async function runGeminiAutomation(
   workerWin: BrowserWindow,
@@ -10,6 +12,10 @@ export async function runGeminiAutomation(
   targetUrl: string = PROVIDER_URLS.gemini,
 ): Promise<{ response: string; title: string }> {
   const wc = workerWin.webContents;
+
+  // Use Firefox UA for Google services — Chrome UA triggers Google's embedded-browser
+  // security check (window.chrome.runtime absent in Electron → sign-in blocked).
+  wc.setUserAgent(FIREFOX_UA);
 
   await navigateAndWait(wc, targetUrl);
   await sleep(500);
@@ -45,38 +51,24 @@ export async function runGeminiAutomation(
     void 0;
   `, false);
 
-  let baseline = 0;
-  try {
-    baseline = await wc.executeJavaScript(
-      `document.querySelectorAll('copy-button button[data-test-id="copy-button"]').length`,
-      false,
-    );
-  } catch {
-    baseline = 0;
-  }
+  // Selector covers both unauthenticated layout (data-test-id on <button>)
+  // and authenticated/logged-in layout (data-test-id on <gem-icon-button>).
+  const COPY_BTN_SELECTOR =
+    'copy-button button[data-test-id="copy-button"], copy-button gem-icon-button[data-test-id="copy-button"] button';
+
+  const baseline = await countElements(wc, COPY_BTN_SELECTOR);
 
   // Focus the Chromium renderer process (not the OS window) so keyboard events work.
   // This is different from BrowserWindow.focus() which would steal OS focus.
   wc.focus();
 
-  const autoScript = buildGeminiAutomationScript(prompt, baseline, timeoutMs);
-
-  let nodeTimeoutId!: ReturnType<typeof setTimeout>;
-  const nodeTimeout = new Promise<never>((_, reject) => {
-    nodeTimeoutId = setTimeout(
-      () => reject(new Error('Gemini automation timed out (Node side)')),
-      Math.max(timeoutMs * 5, 300_000),
-    );
-  });
-
-  let result: { response: string; title: string };
-  try {
-    result = await Promise.race([wc.executeJavaScript(autoScript, true), nodeTimeout]);
-  } catch (err: unknown) {
-    throw new Error(`Gemini automation failed: ${(err as Error).message}`);
-  } finally {
-    clearTimeout(nodeTimeoutId);
-  }
+  const autoScript = buildGeminiAutomationScript(prompt, baseline, timeoutMs, COPY_BTN_SELECTOR);
+  const result = await executeAutomationWithTimeout<{ response: string; title: string }>(
+    wc,
+    autoScript,
+    timeoutMs,
+    'Gemini',
+  );
 
   if (!result || !result.response || result.response.trim() === '') {
     throw new Error('Clipboard interceptor returned empty text');
@@ -92,8 +84,10 @@ function buildGeminiAutomationScript(
   prompt: string,
   baselineCopyCount: number,
   timeoutMs: number,
+  copyBtnSelector: string,
 ): string {
   const escapedPrompt = JSON.stringify(prompt);
+  const escapedSelector = JSON.stringify(copyBtnSelector);
 
   return `
 (async function geminiAutomate() {
@@ -179,8 +173,10 @@ function buildGeminiAutomationScript(
   var NO_CHANGE_LIMIT = 30000;
   var geminiLastLen = -1;
   var geminiLastChangeAt = null;
+  var COPY_BTN_SEL = ${escapedSelector};
+
   while (true) {
-    var copyBtns = document.querySelectorAll('copy-button button[data-test-id="copy-button"]');
+    var copyBtns = document.querySelectorAll(COPY_BTN_SEL);
     if (copyBtns.length > BASELINE) break;
     var respEls = document.querySelectorAll('model-response, message-content');
     var respLen = 0;
@@ -209,11 +205,16 @@ function buildGeminiAutomationScript(
     if (titleEl) title = titleEl.innerText;
   } catch(e) {}
 
-  var allCopyBtns = document.querySelectorAll('copy-button button[data-test-id="copy-button"]');
+  var allCopyBtns = document.querySelectorAll(COPY_BTN_SEL);
   var lastCopyBtn = allCopyBtns[allCopyBtns.length - 1];
   if (!lastCopyBtn) throw new Error('Copy button vanished unexpectedly');
 
   var response = await interceptCopy(lastCopyBtn);
+  if (!response) {
+    // Fallback: read text directly from the last model response in the DOM
+    var lastResp = document.querySelector('model-response:last-of-type message-content div.markdown, .response-container:last-of-type .markdown');
+    response = lastResp ? (lastResp.innerText || '').trim() : '';
+  }
   if (!response) throw new Error('Clipboard interceptor got nothing after copy click');
   return { response: response, title: title };
 })()`;

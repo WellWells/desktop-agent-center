@@ -2,11 +2,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { telegramApi, clipboardApi } from '../../../api/electronApi';
 
-import { useI18nStore } from '../../../store/i18nStore';
 import type { TelegramSettingsSnapshot } from '../../../../../shared/types';
 
 export function useTelegramSettings() {
-  const { t } = useI18nStore();
   const [telegramSettings, setTelegramSettings] = useState<TelegramSettingsSnapshot | null>(null);
   const [telegramTokenInput, setTelegramTokenInput] = useState('');
   const [telegramBusy, setTelegramBusy] = useState(false);

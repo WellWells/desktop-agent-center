@@ -90,6 +90,36 @@ export function consumePairingCode(
   };
 }
 
+export interface PairingBridge {
+  isPairedUser: (userId: number) => boolean;
+  consumePairingCode: (
+    code: string,
+    user: PairingUserProfile,
+  ) => { ok: boolean; reason?: string };
+}
+
+/** Builds pairing callbacks over a persisted pairing-state accessor (DI for the runtime). */
+export function createPairingBridge(
+  getPairing: () => TelegramPairingState,
+  savePairing: (next: TelegramPairingState) => void,
+): PairingBridge {
+  return {
+    isPairedUser: (userId) => {
+      const pairing = normalizePairingState(getPairing());
+      if (pairing.pendingCodes.length !== getPairing().pendingCodes.length) {
+        savePairing(pairing);
+      }
+      return hasPairedUser(pairing, userId);
+    },
+    consumePairingCode: (code, user) => {
+      const pairing = normalizePairingState(getPairing());
+      const result = consumePairingCode(pairing, code, user);
+      savePairing(result.nextState);
+      return { ok: result.ok, reason: result.reason };
+    },
+  };
+}
+
 function createPairingCode(existing: Set<string>): string {
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   for (let attempt = 0; attempt < 20; attempt += 1) {

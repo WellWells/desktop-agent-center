@@ -19,7 +19,7 @@ const VIEW_BY_SHORTCUT: Record<string, View> = {
 };
 
 export function useAppBootstrap() {
-  const { appendLog, setStatus, setQueue, setHotkey, setView, setAiUrl, setDuckaiModels } = useAppStore();
+  const { appendLog, setStatus, setQueue, setWorkerAttention, setHotkey, setView, setAiUrl, setDuckaiModels } = useAppStore();
   const { loadLocales } = useI18nStore();
   const { initializeListeners } = useUpdateStore();
   const duckaiModelsFetched = useRef(false);
@@ -59,10 +59,11 @@ export function useAppBootstrap() {
       ipcEvents.onLog(appendLog),
       ipcEvents.onStatus((s) => setStatus(s as 'idle' | 'processing')),
       ipcEvents.onQueueUpdate(setQueue),
+      ipcEvents.onWorkerStatus(setWorkerAttention),
       ipcEvents.onNavigateSettings(() => setView('settings')),
     ];
     return () => unsubs.forEach((fn) => fn());
-  }, [appendLog, setStatus, setQueue, setView]);
+  }, [appendLog, setStatus, setQueue, setWorkerAttention, setView]);
 
   // Global Alt+[1-4] keyboard navigation.
   const handleKeyDown = useCallback((event: KeyboardEvent) => {

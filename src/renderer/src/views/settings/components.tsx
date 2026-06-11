@@ -2,7 +2,6 @@
 // Re-exports global shared components + settings-specific NavItem.
 import React from 'react';
 import { NavLink, Box } from '@mantine/core';
-import { AppSegmentedControl } from '../../components/AppSegmentedControl';
 
 // ── Global shared components ─────────────────────────────────────────────
 export { ToggleSwitch } from '../../components/ToggleSwitch';

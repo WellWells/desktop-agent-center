@@ -113,7 +113,7 @@
 }
 
 .popoverHeader {
-  padding: 0.75rem;
+  padding: 8px 12px;
   border-bottom: 1px solid var(--mantine-color-default-border);
   font-size: var(--font-size-md);
   color: var(--mantine-color-text-primary);
@@ -122,26 +122,32 @@
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .popoverBody {
   max-height: calc(420px - 52px);
   overflow-y: auto;
-  padding: 0.75rem;
+  padding: 8px;
   flex: 1;
 }
 
+/* Single-row layout: title+id on the left, badge+button on the right */
 .queueItem {
   border: 1px solid var(--mantine-color-default-border);
-  border-radius: var(--mantine-radius-md);
-  padding: 0.875rem;
+  border-radius: var(--mantine-radius-sm);
+  padding: 7px 10px;
   background: var(--mantine-color-bg-secondary);
-  margin-bottom: 0.75rem;
-  transition: all 0.15s ease;
+  margin-bottom: 6px;
+  transition: background 0.12s ease, border-color 0.12s ease;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.queueItem:last-child {
+  margin-bottom: 0;
 }
 
 .queueItem:hover {
@@ -149,17 +155,19 @@
   background: var(--mantine-color-bg-tertiary);
 }
 
+/* Unused — kept for safety */
 .queueItemHeader {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
 }
 
 .queueItemTitleWrapper {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   flex: 1;
   min-width: 0;
 }
@@ -168,10 +176,11 @@
   font-size: var(--font-size-xs);
   font-weight: 700;
   letter-spacing: 0.3px;
-  padding: 4px 8px;
+  padding: 2px 7px;
   border-radius: var(--mantine-radius-sm);
   white-space: nowrap;
   flex-shrink: 0;
+  line-height: 1.6;
 }
 
 .queueItemStatusBadge.running {
@@ -187,21 +196,19 @@
 }
 
 .queueItemTitle {
-  font-size: var(--font-size-sm);
-  font-weight: 700;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
   color: var(--mantine-color-text-primary);
-  letter-spacing: 0.2px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .queueItemId {
-  font-size: var(--font-size-xs);
+  font-size: 10px;
   font-family: var(--font-mono);
   font-weight: 500;
   color: var(--mantine-color-text-muted);
-  letter-spacing: 0.2px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -216,7 +223,17 @@
   line-height: 1.4;
 }
 
+/* Right-side: badge + action button in a row */
+.queueItemRight {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Kept for compatibility but no longer used as a block row */
 .queueItemAction {
-  align-self: flex-end;
+  flex-shrink: 0;
 }
 

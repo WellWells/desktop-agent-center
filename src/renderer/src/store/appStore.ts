@@ -1,6 +1,6 @@
 // src/renderer/src/store/appStore.ts
 import { create } from 'zustand';
-import type { OutputFile, QueueState } from '../../../shared/types';
+import type { OutputFile, QueueState, WorkerAttention } from '../../../shared/types';
 import { parseMarkdownBlocks } from '../utils/parseMarkdownBlocks';
 import type { MarkdownBlocks } from '../utils/parseMarkdownBlocks';
 import { DEFAULT_MODEL_URL } from '../config/models';
@@ -29,6 +29,7 @@ interface AppState {
   // Status
   status: 'idle' | 'processing';
   queue: QueueState;
+  workerAttention: WorkerAttention;
   logs: string[];
 
   // Files
@@ -54,6 +55,7 @@ interface AppState {
   // Actions
   setStatus: (status: 'idle' | 'processing') => void;
   setQueue: (q: QueueState) => void;
+  setWorkerAttention: (state: WorkerAttention) => void;
   appendLog: (msg: string) => void;
   clearLogs: () => void;
   setFiles: (files: OutputFile[], options?: FileUpdateOptions) => void;
@@ -74,6 +76,7 @@ interface AppState {
 export const useAppStore = create<AppState>((set) => ({
   status: 'idle',
   queue: { total: 0, current: 0, status: 'idle', items: [] },
+  workerAttention: 'idle',
   logs: [],
   files: [],
   selectedFile: null,
@@ -90,6 +93,7 @@ export const useAppStore = create<AppState>((set) => ({
 
   setStatus: (status) => set({ status }),
   setQueue: (queue) => set({ queue }),
+  setWorkerAttention: (workerAttention) => set({ workerAttention }),
   appendLog: (msg) =>
     set((state) => {
       // Avoid creating a full copy when under the cap

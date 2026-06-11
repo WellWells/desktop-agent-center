@@ -1,7 +1,7 @@
 // Skill config editor registry and shared skill metadata.
 import React from 'react';
 import {
-  Terminal, Globe, MessageSquare, Clipboard, Wrench, Bot, Rss, OctagonX, StickyNote, Eye, Repeat, CircleDot,
+  Terminal, Globe, MessageSquare, Clipboard, Wrench, Bot, Rss, OctagonX, StickyNote, Eye, Repeat, CircleDot, Split,
 } from 'lucide-react';
 import type { SkillType } from '../../../../../shared/types';
 import type { SkillConfigProps, SkillConfigEditorMap } from './types';
@@ -16,10 +16,17 @@ import { StopConfig } from './StopConfig';
 import { CommentConfig } from './CommentConfig';
 import { ScraperConfig } from './ScraperConfig';
 import { LoopConfig } from './LoopConfig';
+import { IfConfig } from './IfConfig';
 
 const EndLoopConfig: React.FC<SkillConfigProps> = ({ t }) => (
   <span style={{ fontSize: 'var(--mantine-font-size-xs)', color: 'var(--mantine-color-dimmed)' }}>
     {t('agentflow.skill.end_loop.hint')}
+  </span>
+);
+
+const EndIfConfig: React.FC<SkillConfigProps> = ({ t }) => (
+  <span style={{ fontSize: 'var(--mantine-font-size-xs)', color: 'var(--mantine-color-dimmed)' }}>
+    {t('agentflow.skill.end_if.hint')}
   </span>
 );
 
@@ -36,6 +43,8 @@ export {
   ScraperConfig,
   LoopConfig,
   EndLoopConfig,
+  IfConfig,
+  EndIfConfig,
 };
 export type { SkillConfigProps, SkillConfigEditor, SkillConfigEditorMap } from './types';
 
@@ -52,6 +61,8 @@ export const STEP_CONFIG_EDITOR: SkillConfigEditorMap = {
   scraper: ScraperConfig,
   loop: LoopConfig,
   end_loop: EndLoopConfig,
+  if: IfConfig,
+  end_if: EndIfConfig,
 };
 
 export const SKILL_ICON: Record<SkillType, React.ReactNode> = {
@@ -67,6 +78,8 @@ export const SKILL_ICON: Record<SkillType, React.ReactNode> = {
   scraper: <Eye size={14} />,
   loop: <Repeat size={14} />,
   end_loop: <CircleDot size={14} />,
+  if: <Split size={14} />,
+  end_if: <CircleDot size={14} />,
 };
 
 export const SKILL_COLOR: Record<SkillType, string> = {
@@ -82,6 +95,8 @@ export const SKILL_COLOR: Record<SkillType, string> = {
   scraper: 'var(--mantine-color-teal-light)',
   loop: 'var(--mantine-color-teal-light)',
   end_loop: 'var(--mantine-color-gray-light)',
+  if: 'var(--mantine-color-yellow-light)',
+  end_if: 'var(--mantine-color-gray-light)',
 };
 
 

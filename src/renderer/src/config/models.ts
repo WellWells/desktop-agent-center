@@ -9,8 +9,6 @@ interface ModelIconProps {
 
 export type ModelIcon = ComponentType<ModelIconProps>;
 
-const DUCKDUCKGO_ICON_SRC = new URL('../../../../assets/duckduckgo.svg', import.meta.url).toString();
-
 const DuckDuckGoIcon = memo(({ size = 14 }: ModelIconProps) => {
   return createElement(
     'svg',

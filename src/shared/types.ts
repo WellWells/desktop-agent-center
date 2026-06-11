@@ -42,8 +42,12 @@ export const IPC = {
   UI_NOTIFICATION: 'ui:notification',
   HOTKEY_CHANGED: 'hotkey:changed',
   TELEGRAM_RUNTIME: 'telegram:runtime',
+  WORKER_STATUS: 'worker:status',
 
   // Renderer → Main
+  WINDOW_MINIMIZE: 'window:minimize',
+  WINDOW_MAXIMIZE: 'window:maximize',
+  WINDOW_CLOSE: 'window:close',
   SHOW_WORKER: 'show-worker',
   HIDE_WORKER: 'hide-worker',
   UPDATE_CHECK: 'update:check',
@@ -79,6 +83,7 @@ export const IPC = {
   OPEN_PATH: 'file:open-path',
   CAPTURE_MARKDOWN_IMAGE: 'markdown:capture-image',
   CANCEL_QUEUE_TASK: 'queue:cancel-task',
+  FORCE_SKIP_ACTIVE_TASK: 'queue:force-skip-active',
   COPY_TEXT_TO_CLIPBOARD: 'clipboard:write-text',
   GET_TELEGRAM_SETTINGS: 'telegram:get-settings',
   UPDATE_TELEGRAM_ENABLED: 'telegram:update-enabled',
@@ -155,6 +160,12 @@ export interface FlowExecutionEvent {
 
 // ── Status ───────────────────────────────────────────────────────────────────
 export type AppStatus = 'idle' | 'processing';
+
+// ── Worker Window Attention ──────────────────────────────────────────────────
+// Pushed main → renderer so the title-bar worker button can reflect why the
+// worker window needs the user: 'login' (sign-in required) or 'verification'
+// (Cloudflare challenge). 'idle' clears the attention indicator.
+export type WorkerAttention = 'idle' | 'login' | 'verification';
 
 // ── Queue ────────────────────────────────────────────────────────────────────
 export interface QueueState {
@@ -305,7 +316,7 @@ export interface MarkdownCaptureResult {
 
 // ── AgentFlow (Flow Automation) ──────────────────────────────────────────────
 
-export type SkillType = 'shell' | 'browser' | 'llm' | 'clipboard' | 'utility' | 'bot' | 'rss' | 'stop' | 'comment' | 'scraper' | 'loop' | 'end_loop';
+export type SkillType = 'shell' | 'browser' | 'llm' | 'clipboard' | 'utility' | 'bot' | 'rss' | 'stop' | 'comment' | 'scraper' | 'loop' | 'end_loop' | 'if' | 'end_if';
 
 export interface SkillInstance {
   id: string;

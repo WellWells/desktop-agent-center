@@ -1,4 +1,4 @@
-// src/main/telegram/commands.ts — bot command registration and dispatch.
+// bot command registration and dispatch.
 //
 // Wires grammy middleware (session/conversations) and routes each command to
 // its handler. Handler implementations live in commandHandlers.ts; pairing

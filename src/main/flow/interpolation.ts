@@ -1,4 +1,4 @@
-// src/main/flow/interpolation.ts — template/variable utilities for flow steps.
+// template/variable utilities for flow steps.
 
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';

@@ -1,4 +1,3 @@
-// src/renderer/src/components/LogPanel.tsx
 import React, { useCallback, useEffect, useRef } from 'react';
 import { Box, Button, Flex, Group, Stack, Text } from '@mantine/core';
 import { useVirtualizer } from '@tanstack/react-virtual';
@@ -76,7 +75,7 @@ export const LogPanel: React.FC = () => {
     const a = document.createElement('a');
     const now = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
     a.href = url;
-    a.download = `dac-logs-${now}.txt`;
+    a.download = `yobi-logs-${now}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   }, [logs]);

@@ -1,4 +1,4 @@
-// src/preload/index.ts — Context bridge (typed)
+// Context bridge (typed)
 import { contextBridge, ipcRenderer } from 'electron';
 import { IPC } from '../shared/types';
 import type {
@@ -30,7 +30,6 @@ export type ElectronAPI = {
   maximizeWindow: () => void;
   closeWindow: () => void;
 
-  // Logging / status push from main
   onLog: (cb: (msg: string) => void) => () => void;
   onStatus: (cb: (status: string) => void) => () => void;
   onQueueUpdate: (cb: (state: QueueState) => void) => () => void;
@@ -96,6 +95,7 @@ export type ElectronAPI = {
   showInFolder: (filePath: string) => Promise<void>;
   openPath: (filePath: string) => Promise<boolean>;
   openConfigDir: () => Promise<boolean>;
+  openThirdPartyLicenses: () => Promise<boolean>;
   exportConfig: () => Promise<boolean>;
   importConfig: () => Promise<SettingsSnapshot | null>;
   captureMarkdownDocument: (request: MarkdownCaptureRequest) => Promise<MarkdownCaptureResult>;
@@ -276,6 +276,7 @@ const api: ElectronAPI = {
   showInFolder: (filePath) => ipcRenderer.invoke(IPC.SHOW_IN_FOLDER, filePath),
   openPath: (filePath) => ipcRenderer.invoke(IPC.OPEN_PATH, filePath),
   openConfigDir: () => ipcRenderer.invoke(IPC.OPEN_CONFIG_DIR),
+  openThirdPartyLicenses: () => ipcRenderer.invoke(IPC.OPEN_THIRD_PARTY_LICENSES),
   exportConfig: () => ipcRenderer.invoke(IPC.EXPORT_CONFIG),
   importConfig: () => ipcRenderer.invoke(IPC.IMPORT_CONFIG),
   captureMarkdownDocument: (request) => ipcRenderer.invoke(IPC.CAPTURE_MARKDOWN_IMAGE, request),

@@ -1,4 +1,3 @@
-// src/renderer/src/views/settings/sections/GeneralSection.tsx
 import React from 'react';
 import { ActionIcon, Box, Group, Stack, Text, Button as MButton } from '@mantine/core';
 import {
@@ -40,7 +39,6 @@ export const GeneralSection: React.FC<Props> = ({
   <Box display={showSection(TAG_SETS.hotkey, 'general') || showSection(TAG_SETS.notify, 'general') || showSection(TAG_SETS.tray, 'general') || showSection(TAG_SETS.language, 'general') || showSection(TAG_SETS.theme, 'general') ? 'block' : 'none'}>
     {isSearching && <GroupHeader label={t('settings.group.general')} />}
 
-    {/* ─ Hotkey ─ */}
     <SectionCard style={{ marginBottom: sectionGap, display: showSection(TAG_SETS.hotkey, 'general') ? 'block' : 'none' }}>
       <SectionTitle icon={<Keyboard size={15} />} label={t('settings.hotkey')} />
       <Group gap={8} align="center">
@@ -94,7 +92,6 @@ export const GeneralSection: React.FC<Props> = ({
       <Text fz="var(--font-size-sm)" mt={8} c="dimmed">{t('settings.hotkey.hint')}</Text>
     </SectionCard>
 
-    {/* ─ Notification ─ */}
     <SectionCard style={{ marginBottom: sectionGap, display: showSection(TAG_SETS.notify, 'general') ? 'block' : 'none' }}>
       <SectionTitle icon={<Bell size={15} />} label={t('settings.notifications')} />
       <SettingRow
@@ -104,7 +101,6 @@ export const GeneralSection: React.FC<Props> = ({
       />
     </SectionCard>
 
-    {/* ─ System Tray ─ */}
     <SectionCard style={{ marginBottom: sectionGap, display: showSection(TAG_SETS.tray, 'general') ? 'block' : 'none' }}>
       {(() => {
         const isMac = navigator.userAgent.includes('Macintosh');
@@ -130,7 +126,6 @@ export const GeneralSection: React.FC<Props> = ({
       })()}
     </SectionCard>
 
-    {/* ─ Language ─ */}
     <SectionCard style={{ marginBottom: sectionGap, display: showSection(TAG_SETS.language, 'general') ? 'block' : 'none' }}>
       <SettingRow
         icon={<Languages size={13} />}
@@ -145,7 +140,6 @@ export const GeneralSection: React.FC<Props> = ({
       />
     </SectionCard>
 
-    {/* ─ Theme ─ */}
     <SectionCard style={{ marginBottom: sectionGap, display: showSection(TAG_SETS.theme, 'general') ? 'block' : 'none' }}>
       <SettingRow
         icon={<Palette size={13} />}

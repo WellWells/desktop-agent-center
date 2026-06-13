@@ -1,4 +1,4 @@
-// src/main/configNormalizers.ts — Config normalizer/deserializer functions
+// Config normalizer/deserializer functions
 //
 // Pure functions that coerce arbitrary JSON input (stored config, imports)
 // into well-formed Config sub-structures. No Electron or disk I/O here.

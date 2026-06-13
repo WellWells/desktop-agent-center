@@ -1,4 +1,4 @@
-// src/main/flow/skills/feeds.ts — checkpoint-based feed ingestion skills (rss, scraper).
+// checkpoint-based feed ingestion skills (rss, scraper).
 //
 // Both skills fetch a remote list of items and return only those unseen since the
 // previous run, persisting a per-step checkpoint to deduplicate across executions.
@@ -8,8 +8,6 @@ import { getProviderLabel, preparePromptForProvider } from '../../providers';
 import { fetchAndParse, fetchRawText, parseRssFeed } from '../../urlParser';
 import { sendLog } from '../../helpers';
 import { makeCheckpointStore } from '../checkpoint';
-
-// ── RSS Skill ────────────────────────────────────────────────────────────────
 
 /** RSS checkpoint state persisted per step instance. */
 interface RssCheckpoint {
@@ -139,8 +137,6 @@ export async function execRss(
   }
   return prepared.prompt;
 }
-
-// ── Scraper Skill ────────────────────────────────────────────────────────────
 
 interface ScraperCheckpoint {
   lastLinks: string[];

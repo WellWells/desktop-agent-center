@@ -1,4 +1,4 @@
-// src/main/providers/gemini.ts — Electron DOM-injection automation for Gemini web
+// Electron DOM-injection automation for Gemini web
 import type { BrowserWindow } from 'electron';
 import { sleep, navigateAndWait, INJECTED_SLEEP_JS, INJECTED_WAIT_FOR_JS, INJECTED_INTERCEPT_COPY_JS } from './common';
 import { executeAutomationWithTimeout, countElements } from './automationExecutor';
@@ -20,7 +20,6 @@ export async function runGeminiAutomation(
   await navigateAndWait(wc, targetUrl);
   await sleep(500);
 
-  // ── Focus & visibility spoofing ──────────────────────────────────────────
   // The worker window is kept hidden (off-screen + opacity:0) to avoid
   // stealing OS focus from the main window on macOS. Gemini's JS, however,
   // can check document.hasFocus() / document.visibilityState / document.hidden

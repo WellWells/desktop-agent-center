@@ -1,4 +1,3 @@
-// src/renderer/src/App.tsx
 import React, { useCallback, useEffect, useState } from 'react';
 import { AppWindow, LogOut } from 'lucide-react';
 import { Modal, Button, Group, Text, Checkbox, Box, Flex, Stack, Loader } from '@mantine/core';
@@ -66,7 +65,6 @@ export const App: React.FC = () => {
         </Box>
       </Flex>
 
-      {/* ── Close / hide-to-tray dialog ─────────────────────────────── */}
       <Modal
         opened={showCloseDialog}
         onClose={() => { }}
@@ -92,7 +90,6 @@ export const App: React.FC = () => {
         </Text>
 
         <Group gap={8} mb={8} grow>
-          {/* Hide to tray */}
           <Button
             variant="default"
             size="md"
@@ -115,7 +112,6 @@ export const App: React.FC = () => {
         </Group>
 
         <Group gap={8} mb={16} grow>
-          {/* Quit app */}
           <Button
             variant="default"
             color="red"

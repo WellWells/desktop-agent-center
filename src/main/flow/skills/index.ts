@@ -1,4 +1,4 @@
-// src/main/flow/skills/index.ts — skill dispatcher.
+// skill dispatcher.
 //
 // Maps a SkillType to its handler. To add a skill: implement the handler in
 // actions.ts (or feeds.ts) and add a case below.

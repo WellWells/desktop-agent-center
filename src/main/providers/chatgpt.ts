@@ -1,4 +1,4 @@
-// src/main/providers/chatgpt.ts — Electron DOM-injection automation for ChatGPT web
+// Electron DOM-injection automation for ChatGPT web
 import type { BrowserWindow } from 'electron';
 import { navigateAndWait, sleep, INJECTED_SLEEP_JS, INJECTED_WAIT_FOR_JS, INJECTED_INTERCEPT_COPY_JS } from './common';
 import { executeAutomationWithTimeout, countElements, dispatchFocusEvents } from './automationExecutor';

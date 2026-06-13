@@ -1,4 +1,4 @@
-// src/main/configTypes.ts — Config shape definitions and default values
+// Config shape definitions and default values
 //
 // Shared by config.ts (store + persistence) and configNormalizers.ts.
 // Keeping types and defaults here avoids circular imports between the
@@ -6,8 +6,6 @@
 
 import { PROVIDER_URLS } from '../shared/types';
 import type { CaptureFormat, CaptureSettings, PromptPreferences, TelegramPairingState } from '../shared/types';
-
-// ── Interfaces ────────────────────────────────────────────────────────────────
 
 export interface Config {
   targetUrl: string;
@@ -44,8 +42,6 @@ export interface StoredTelegramConfig extends Omit<TelegramConfig, 'botToken'> {
   botTokenEncrypted: string;
 }
 export type StoredConfig = Omit<Config, 'telegram'> & { telegram: StoredTelegramConfig };
-
-// ── Default stored config ─────────────────────────────────────────────────────
 
 export const defaultStored: StoredConfig = {
   targetUrl: PROVIDER_URLS.gemini,

@@ -1,4 +1,3 @@
-// src/renderer/src/views/SettingsView.tsx
 // Skeleton: only composes sub-modules. All business logic lives in hooks; all rendering lives in sections.
 import React, { useCallback, useState } from 'react';
 import { ActionIcon, Box, Flex, Group, Stack, Text, Title } from '@mantine/core';
@@ -32,7 +31,6 @@ export const SettingsView: React.FC = () => {
   const { setFiles, selectFile, setFileContent } = useAppStore();
   const { theme, setTheme } = useThemeStore();
 
-  // ── Business logic hooks ──────────────────────────────────────────────────────────────────
   const hotkey = useHotkeyRecorder();
   const prefs = usePromptPrefs();
   const system = useSystemSettings();
@@ -55,7 +53,6 @@ export const SettingsView: React.FC = () => {
     await telegram.loadTelegramSettings();
   }, [hotkey, prefs, system, telegram, setTheme, setLocale]);
 
-  // ── Locale label helper ───────────────────────────────────────────────────
   const localeKeyMap: Record<string, string> = {
     'en-US': 'language.name.enUS',
     'zh-TW': 'language.name.zhTW',
@@ -72,7 +69,6 @@ export const SettingsView: React.FC = () => {
     return key ? t(key) : localeCode;
   }, [t]);
 
-  // ── Danger actions ────────────────────────────────────────────────────────
   const handleResetSettings = useCallback(async () => {
     const reset = await settingsApi.resetSettings();
     if (!reset) return;
@@ -108,14 +104,12 @@ export const SettingsView: React.FC = () => {
     else if (action === 'clear-history') await handleClearHistory();
   }, [dangerAction, handleResetSettings, handleClearHistory]);
 
-  // ── Determine which category blocks to show ───────────────────────────────────────────────
   const showCategoryBlock = (category: 'general' | 'ai' | 'telegram' | 'system'): string =>
     nav.showCategory(category) ? 'block' : 'none';
 
   return (
     <Flex flex={1} bg="var(--mantine-color-body)" style={{ overflow: 'hidden' }}>
 
-      {/* Left nav rail */}
       <Stack
         gap={0}
         component="nav"
@@ -146,11 +140,9 @@ export const SettingsView: React.FC = () => {
         </Box>
       </Stack>
 
-      {/* Main content area */}
       <Box flex={1} p="24px 20px 40px" style={{ overflowY: 'auto' }}>
         <Box maw={560} mx="auto">
 
-          {/* Page title */}
           <Title
             order={2}
             mb={20}
@@ -165,7 +157,6 @@ export const SettingsView: React.FC = () => {
             </Group>
           </Title>
 
-          {/* Search bar */}
           <Box pos="relative" mb={20}>
             <AppTextInput
               value={nav.searchQuery}
@@ -188,7 +179,6 @@ export const SettingsView: React.FC = () => {
             />
           </Box>
 
-          {/* General settings */}
           <Box display={showCategoryBlock('general')}>
             <GeneralSection
               hotkey={hotkey}
@@ -206,7 +196,6 @@ export const SettingsView: React.FC = () => {
             />
           </Box>
 
-          {/* AI settings */}
           <Box display={showCategoryBlock('ai')}>
             <AiSection
               system={system}
@@ -219,7 +208,6 @@ export const SettingsView: React.FC = () => {
             />
           </Box>
 
-          {/* Telegram settings */}
           <Box display={showCategoryBlock('telegram')}>
             <TelegramSection
               telegram={telegram}
@@ -230,7 +218,6 @@ export const SettingsView: React.FC = () => {
             />
           </Box>
 
-          {/* System settings */}
           <Box display={showCategoryBlock('system')}>
             <SystemSection
               dangerAction={dangerAction}

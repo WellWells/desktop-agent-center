@@ -32,7 +32,6 @@ export const SystemSection: React.FC<Props> = ({
     <Box>
       {isSearching && <GroupHeader label={t('settings.group.system')} />}
 
-      {/* ─ Configuration ─ */}
       <Box display={showSection(TAG_SETS.config, 'system') ? 'block' : 'none'}>
         <SectionCard style={{ marginBottom: sectionGap }}>
           <SectionTitle icon={<FolderOpen size={15} />} label={t('settings.config.title')} />
@@ -87,14 +86,12 @@ export const SystemSection: React.FC<Props> = ({
         </SectionCard>
       </Box>
 
-      {/* ─ Danger ─ */}
       {isSearching && <GroupHeader label={t('settings.group.danger')} />}
 
       <Box display={showSection(TAG_SETS.danger, 'system') ? 'block' : 'none'}>
         <SectionCard danger style={{ marginBottom: 24 }}>
           <SectionTitle icon={<ShieldAlert size={15} />} label={t('settings.danger.title')} c="var(--mantine-color-error)" />
 
-          {/* Clear history */}
           <Group
             justify="space-between"
             align="center"
@@ -124,7 +121,6 @@ export const SystemSection: React.FC<Props> = ({
             </MButton>
           </Group>
 
-          {/* Reset settings */}
           <Group justify="space-between" align="center" wrap="nowrap" gap={12}>
             <Stack gap={2} flex={1} miw={0}>
               <Text fz="var(--font-size-md)" fw={600} c="var(--mantine-color-default-color)">
@@ -148,7 +144,6 @@ export const SystemSection: React.FC<Props> = ({
         </SectionCard>
       </Box>
 
-      {/* Danger confirmation dialog */}
       <WebDialog
         open={dangerAction !== null}
         title={

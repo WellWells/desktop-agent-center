@@ -1,4 +1,3 @@
-// src/renderer/src/views/agentflow/FlowImportModal.tsx
 // Modal for importing flows from a URL or a local JSON file via file input.
 import React, { useCallback, useRef, useState } from 'react';
 import { Button, Group, Modal, Stack, Text } from '@mantine/core';
@@ -79,7 +78,6 @@ export const FlowImportModal: React.FC<FlowImportModalProps> = ({
       zIndex={200}
     >
       <Stack gap="md">
-        {/* File import */}
         <Stack gap="xs">
           <Text fz="sm" fw={600}>{t('agentflow.import.file.label')}</Text>
           <input
@@ -99,7 +97,6 @@ export const FlowImportModal: React.FC<FlowImportModalProps> = ({
           </Button>
         </Stack>
 
-        {/* URL import */}
         <Stack gap="xs">
           <Text fz="sm" fw={600}>{t('agentflow.import.url.label')}</Text>
           <AppTextInput

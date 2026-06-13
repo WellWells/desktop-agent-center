@@ -1,4 +1,4 @@
-// src/main/flow/skills/actions.ts — action and single-fetch skills.
+// action and single-fetch skills.
 //
 // shell, browser, llm, clipboard, comment, utility and loop. These either perform
 // a side effect or fetch a single resource; stateless feed ingestion lives in feeds.ts.
@@ -15,8 +15,6 @@ import type { FlowExecutorDeps } from '../types';
 import { inferTelegramSendAs, isCaptureFormat } from '../interpolation';
 
 const execAsync = promisify(exec);
-
-// ── Shell Skill ────────────────────────────────────────────────────────────────
 
 // Trust boundary: command content is user-defined in the flow editor.
 // Context variables interpolated into the command are from prior step outputs.
@@ -41,8 +39,6 @@ export async function execShell(config: Record<string, string>, timeoutMs: numbe
   const { stdout, stderr } = await execAsync(command, { timeout: timeoutMs, shell });
   return (stdout || stderr).trim();
 }
-
-// ── Browser Skill ──────────────────────────────────────────────────────────────
 
 // Fetches the entire page HTML, strips script/style tags, and returns the body's text content (trimmed/collapsed).
 async function fetchEntirePageText(url: string): Promise<string> {
@@ -98,8 +94,6 @@ export async function execBrowser(config: Record<string, string>): Promise<strin
   return await fetchEntirePageText(url);
 }
 
-// ── LLM Skill ──────────────────────────────────────────────────────────────────
-
 export async function execLlm(
   config: Record<string, string>,
   deps: FlowExecutorDeps,
@@ -152,8 +146,6 @@ export async function execLlm(
   sendLog(`🖼️ [AgentFlow] LLM export generated: ${filePath}`);
   return filePath;
 }
-
-// ── Clipboard / Comment / Utility / Bot / Loop Skills ───────────────────────────
 
 export function execClipboard(config: Record<string, string>): string {
   const action = config.action ?? 'read';

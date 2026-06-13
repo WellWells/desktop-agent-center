@@ -1,4 +1,4 @@
-// src/renderer/src/store/flowHelpers.ts — AgentFlow factory/helper functions
+// AgentFlow factory/helper functions
 import type { FlowDefinition, SkillInstance, SkillType } from '../../../shared/types';
 
 export function createId(): string {

@@ -1,8 +1,6 @@
-// src/main/clipboard.ts — Clipboard capture via simulated OS copy
+// Clipboard capture via simulated OS copy
 import { clipboard, systemPreferences } from 'electron';
 import { execFile } from 'node:child_process';
-
-// ── macOS Accessibility permission helpers ────────────────────────────────────
 
 /**
  * Returns true if the app has been granted Accessibility permission on macOS.
@@ -21,8 +19,6 @@ export function promptMacosAccessibility(): void {
   if (process.platform !== 'darwin') return;
   systemPreferences.isTrustedAccessibilityClient(true);
 }
-
-// ── Clipboard Backup & Restore ────────────────────────────────────────────────
 
 interface ClipboardSnapshot {
   format: 'text' | 'image' | 'html' | 'empty';
@@ -92,8 +88,6 @@ export function restoreClipboard(snapshot: ClipboardSnapshot): void {
     rtf: snapshot.rtf ?? '',
   });
 }
-
-// ── Selected-text capture via OS-level simulated copy ────────────────────────
 
 // Poll clipboard after a simulated Cmd/Ctrl+C.
 // Checks immediately (Cmd+C may already be done when osascript exits),

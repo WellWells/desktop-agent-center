@@ -1,4 +1,4 @@
-// src/main/flowCheckpointPaths.ts — shared filesystem paths for AgentFlow data.
+// shared filesystem paths for AgentFlow data.
 //
 // Centralizes the "userData when packaged, cwd otherwise" base directory and the
 // flow-checkpoints path convention, previously duplicated across flowExecutor,

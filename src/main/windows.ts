@@ -1,4 +1,4 @@
-// src/main/windows.ts — Electron window creation and management
+// Electron window creation and management
 import { app, BrowserWindow, nativeImage } from 'electron';
 import * as path from 'node:path';
 import { existsSync } from 'node:fs';
@@ -9,7 +9,6 @@ import { CLEAN_UA } from './userAgent';
 const WORKER_PARTITION = 'persist:gemini';
 type WorkerWindowMode = 'automation' | 'interactive';
 
-// ── Icon resolution ───────────────────────────────────────────────────────────
 // Windows: prefer multi-size .ico (better scaling at 16/32/48 px), fall back to PNG.
 // macOS  : PNG is sufficient at runtime; .icns is only needed for app-bundle packaging.
 function getWindowIcon(): Electron.NativeImage {
@@ -92,7 +91,7 @@ export function createMainWindow(): void {
     height: 700,
     minWidth: 700,
     minHeight: 500,
-    title: 'Desktop Agent Center',
+    title: 'Yobi',
     frame: false,
     backgroundColor: '#0d1117',
     icon: getWindowIcon(),

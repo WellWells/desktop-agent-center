@@ -1,4 +1,4 @@
-// src/main/urlParser.ts — URL detection, HTML fetch & prompt construction
+// URL detection, HTML fetch & prompt construction
 //
 // Orchestrates page loading (pageLoader.ts) and parser-block execution
 // (parserBlocks.ts), and builds the AI analysis prompt from parsed content.
@@ -149,7 +149,6 @@ function parseHtml(html: string, sourceUrl: string): UrlParseResult {
   };
 }
 
-// ── Shared URL-to-prompt helper ──────────────────────────────────────────────
 // Eliminates duplication between hotkey handler (index.ts) and UI handler (ipcHandlers.ts).
 
 interface UrlPromptContext {
@@ -166,7 +165,7 @@ export async function resolveUrlPrompt(text: string, ctx: UrlPromptContext): Pro
   if (!isSingleUrl(text)) return text;
 
   const logFetching = ctx.langData['urlParser.log.fetching'] ?? '🔗 URL detected — fetching page content...';
-  const notifyTitle = ctx.langData['urlParser.notify.title'] ?? 'Desktop Agent Center';
+  const notifyTitle = ctx.langData['urlParser.notify.title'] ?? 'Yobi';
   const notifyBody = (ctx.langData['urlParser.notify.body'] ?? 'Fetching: {{url}}').replace('{{url}}', text);
   ctx.onLog(logFetching);
   ctx.onNotify(notifyTitle, notifyBody);

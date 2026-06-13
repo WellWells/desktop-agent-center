@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🤖 Desktop Agent Center
+# 🤖 Yobi
 
 **免费、无需 API Key 的 AI 自动化桌面应用**
 
@@ -8,7 +8,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS-blue)](#-快速上手)
 [![Electron](https://img.shields.io/badge/Electron-42-47848F?logo=electron)](https://www.electronjs.org/)
 [![No API Key](https://img.shields.io/badge/API%20Key-无需-brightgreen)](#-亮点功能)
-[![PRs Welcome](https://img.shields.io/badge/PRs-欢迎-brightgreen.svg)](https://github.com/WellWells/desktop-agent-center/pulls)
+[![PRs Welcome](https://img.shields.io/badge/PRs-欢迎-brightgreen.svg)](https://github.com/WellWells/yobi/pulls)
 
 **[English](README.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md)**
 
@@ -16,15 +16,15 @@
 
 ---
 
-**Desktop Agent Center（DAC）** 是一款本地优先的开源 AI 自动化工具，直接运行在你的桌面上。它将系统剪贴板与全局热键直接对接主流 AI 服务——**ChatGPT、Gemini、Perplexity、Duck.ai**——无需 API Key，无需订阅，无需信用卡。
+**Yobi** 是一款本地优先的开源 AI 自动化工具，直接运行在你的桌面上。它将系统剪贴板与全局热键直接对接主流 AI 服务——**ChatGPT、Gemini、Perplexity、Duck.ai**——无需 API Key，无需订阅，无需信用卡。
 
-不同于 OpenClaw、Zapier AI、n8n 云端版等从第一天就开始收费的付费自动化平台，DAC **完全免费**，复用你浏览器中已打开的 AI 网页界面。安装完成后，按下热键，剪贴板内容即刻由 AI 处理。
+不同于 OpenClaw、Zapier AI、n8n 云端版等从第一天就开始收费的付费自动化平台，Yobi **完全免费**，复用你浏览器中已打开的 AI 网页界面。安装完成后，按下热键，剪贴板内容即刻由 AI 处理。
 
 ---
 
 ## 目录
 
-- [🤖 Desktop Agent Center](#-desktop-agent-center)
+- [🤖 Yobi](#-yobi)
   - [目录](#目录)
   - [✨ 亮点功能](#-亮点功能)
   - [🚀 快速上手](#-快速上手)
@@ -45,7 +45,7 @@
     - [截图与导出](#截图与导出)
     - [通用设置](#通用设置)
     - [配置备份](#配置备份)
-  - [⚖️ DAC vs. 付费工具](#️-dac-vs-付费工具)
+  - [⚖️ Yobi vs. 付费工具](#️-yobi-vs-付费工具)
   - [🔒 安全与隐私](#-安全与隐私)
   - [🛠️ 开发指南](#️-开发指南)
     - [技术栈](#技术栈)
@@ -62,7 +62,7 @@
 | ⌨️   | **全局热键**      | `Alt+G`（Windows）/ `Command+G`（macOS）捕获选中文字或剪贴板，立即发送给 AI |
 | 🤖   | **多服务商**      | ChatGPT · Gemini · Perplexity · Duck.ai                                     |
 | 🔁   | **AgentFlow**     | 可视化无代码工作流构建器，内置 12 种自动化技能                              |
-| 📱   | **Telegram 集成** | 通过 Telegram Bot 从手机远程操控 AI 代理                                    |
+| 📱   | **Telegram 集成** | 通过 Telegram Bot 从手机远程操控桌面 AI                                    |
 | 💾   | **自动保存**      | 结果以 Markdown 格式附带时间戳保存到本地                                    |
 | 🎨   | **截图与导出**    | 将 AI 回复导出为精美的 PNG、WebP 或 PDF 文件                                |
 | 🔒   | **本地优先**      | 所有逻辑在本机运行，无遥测、无追踪                                          |
@@ -79,8 +79,8 @@
 ### 安装与运行
 
 ```bash
-git clone https://github.com/WellWells/desktop-agent-center.git
-cd desktop-agent-center
+git clone https://github.com/WellWells/yobi.git
+cd yobi
 npm install
 npm run dev
 ```
@@ -88,9 +88,9 @@ npm run dev
 ### 首次使用（4 步）
 
 1. **登录**（可选）——在内置浏览器窗口中登录 ChatGPT / Gemini / Perplexity。
-2. **开启托盘**——前往 **设置 → 通用 → 系统托盘**，启用最小化到托盘，保持 DAC 后台运行。
+2. **开启托盘**——前往 **设置 → 通用 → 系统托盘**，启用最小化到托盘，保持 Yobi 后台运行。
 3. **选中文字**——在任意应用中高亮选中文字。
-4. **按下 `Alt+G`**——DAC 将其发送给 AI，结果自动写回剪贴板并保存。
+4. **按下 `Alt+G`**——Yobi 将其发送给 AI，结果自动写回剪贴板并保存。
 
 > **提示：** 热键可在 **设置 → 通用 → 热键** 中自定义。macOS 默认为 `Command+G`。
 
@@ -125,7 +125,7 @@ npm run dev
 
 ## 📦 预构建下载
 
-从 [**Releases**](https://github.com/WellWells/desktop-agent-center/releases) 页面下载最新版：
+从 [**Releases**](https://github.com/WellWells/yobi/releases) 页面下载最新版：
 
 | 平台    | 格式                                   |
 | ------- | -------------------------------------- |
@@ -136,7 +136,7 @@ npm run dev
 
 ## 🔗 AgentFlow — 可视化工作流自动化
 
-AgentFlow 是 DAC 的可视化自动化引擎。将 **LLM 调用、数据源与 Telegram 输出**串成全自动流水线——无需编写代码。可通过热键、定时计划或 Telegram 指令触发。
+AgentFlow 是 Yobi 的可视化自动化引擎。将 **LLM 调用、数据源与 Telegram 输出**串成全自动流水线——无需编写代码。可通过热键、定时计划或 Telegram 指令触发。
 
 ### 触发方式
 
@@ -186,7 +186,7 @@ Telegram Bot   → 消息: "{{llm_1}}"
 
 ## 📱 Telegram Bot 集成
 
-将 DAC 连接到 Telegram，随时随地远程控制你的 AI 代理：
+将 Yobi 连接到 Telegram，随时随地远程控制你的桌面 AI：
 
 1. **创建 Bot**——在 Telegram 中向 [@BotFather](https://t.me/BotFather) 发消息，获取 Bot Token。
 2. **填入 Token**——进入 **设置 → Telegram**，粘贴 Token。
@@ -232,7 +232,7 @@ Telegram Bot   → 消息: "{{llm_1}}"
 | **主题**          | 浅色 · 深色 · 自动（跟随系统）     |
 | **布局**          | 堆叠 · 左右并排                    |
 | **响应超时**      | AI 响应的最大等待时间              |
-| **开机自启**      | 电脑开机时自动启动 DAC             |
+| **开机自启**      | 电脑开机时自动启动 Yobi             |
 | **关闭至托盘**    | 关闭窗口时最小化到系统托盘而非退出 |
 | **Markdown 缩放** | 调整回复文字大小（70%–200%）       |
 
@@ -242,9 +242,9 @@ Telegram Bot   → 消息: "{{llm_1}}"
 
 ---
 
-## ⚖️ DAC vs. 付费工具
+## ⚖️ Yobi vs. 付费工具
 
-|               | Desktop Agent Center           | OpenClaw / n8n Cloud / Zapier AI |
+|               | Yobi           | OpenClaw / n8n Cloud / Zapier AI |
 | ------------- | ------------------------------ | -------------------------------- |
 | 价格          | **永久免费**                   | 付费订阅 / 按量计费              |
 | API Key       | **无需**                       | 通常需要                         |
@@ -319,8 +319,8 @@ npm run build:mac
 
 <div align="center">
 
-如果 DAC 为你节省了时间或金钱，请 ⭐ **Star** 这个仓库——让更多人发现它！
+如果 Yobi 为你节省了时间或金钱，请 ⭐ **Star** 这个仓库——让更多人发现它！
 
-**[报告 Bug](https://github.com/WellWells/desktop-agent-center/issues) · [功能建议](https://github.com/WellWells/desktop-agent-center/issues) · [讨论区](https://github.com/WellWells/desktop-agent-center/discussions)**
+**[报告 Bug](https://github.com/WellWells/yobi/issues) · [功能建议](https://github.com/WellWells/yobi/issues) · [讨论区](https://github.com/WellWells/yobi/discussions)**
 
 </div>

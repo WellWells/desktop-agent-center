@@ -1,9 +1,8 @@
-// src/renderer/src/views/AboutView.tsx
 import React, { useEffect, useState } from 'react';
 import { Anchor, Box, Button, Container, Divider, Flex, Group, Stack, Text } from '@mantine/core';
 import { useI18nStore } from '../store/i18nStore';
 import { useUpdateStore } from '../store/useUpdateStore';
-import { BookOpen, Bug, Book, Download, Info, RefreshCw } from 'lucide-react';
+import { BookOpen, Bug, Book, Download, Info, RefreshCw, Scale } from 'lucide-react';
 import { SectionCard } from '../components/SectionCard';
 import { GroupHeader } from '../components/GroupHeader';
 import styles from './AboutView.module.css';
@@ -11,12 +10,18 @@ import styles from './AboutView.module.css';
 const TECH_STACK: Array<{ name: string; url: string; desc: string }> = [
   { name: 'Electron', url: 'https://www.electronjs.org/', desc: 'Desktop runtime' },
   { name: 'React + TypeScript', url: 'https://react.dev/', desc: 'UI renderer' },
-  { name: 'Vite', url: 'https://vitejs.dev/', desc: 'Build tool' },
   { name: 'Mantine', url: 'https://mantine.dev/', desc: 'UI component library' },
   { name: 'Zustand', url: 'https://github.com/pmndrs/zustand', desc: 'State management' },
+  { name: 'Vite', url: 'https://vitejs.dev/', desc: 'Build tool' },
+  { name: 'lucide-react', url: 'https://lucide.dev/', desc: 'Icon set' },
   { name: 'grammY', url: 'https://grammy.dev/', desc: 'Telegram Bot API framework' },
-  { name: 'react-markdown + Shiki', url: 'https://github.com/remarkjs/react-markdown', desc: 'Markdown & Syntax highlighting' },
+  { name: 'react-markdown + Shiki', url: 'https://github.com/remarkjs/react-markdown', desc: 'Markdown rendering & syntax highlighting' },
+  { name: 'marked', url: 'https://marked.js.org/', desc: 'Markdown parser (Telegram)' },
   { name: 'KaTeX', url: 'https://katex.org/', desc: 'Math typesetting' },
+  { name: 'electron-updater', url: 'https://www.electron.build/auto-update', desc: 'Auto-update' },
+  { name: 'electron-store', url: 'https://github.com/sindresorhus/electron-store', desc: 'Settings persistence' },
+  { name: 'dayjs', url: 'https://day.js.org/', desc: 'Date & time' },
+  { name: 'cheerio', url: 'https://cheerio.js.org/', desc: 'HTML parsing (scraper / RSS)' },
 ];
 
 export const AboutView: React.FC = () => {
@@ -39,15 +44,14 @@ export const AboutView: React.FC = () => {
 
   const isChinese = locale.toLowerCase().includes('zh');
   const blogUrl = isChinese ? 'https://wellstsai.com/' : 'https://wellstsai.com/en/';
-  const issueUrl = 'https://github.com/WellWells/desktop-agent-center/issues';
-  const github_repo = 'https://github.com/WellWells/desktop-agent-center/';
+  const issueUrl = 'https://github.com/WellWells/yobi/issues';
+  const github_repo = 'https://github.com/WellWells/yobi/';
 
   return (
     <Flex flex={1} bg="var(--mantine-color-body)" style={{ overflow: 'hidden' }}>
       <Box flex={1} style={{ overflowY: 'auto' }}>
         <Container size={680} py={28} pb={40}>
 
-        {/* ═══ Hero ═══════════════════════════════════════════════════════ */}
         <Box className={styles.hero}>
           {appIconDataUrl && (
             <Box className={styles.heroIconWrapper}>
@@ -63,7 +67,7 @@ export const AboutView: React.FC = () => {
             </Box>
           )}
           <Text component="h1" className={styles.heroTitle}>
-            Desktop Agent Center
+            Yobi
           </Text>
           <Text component="span" className={styles.heroVersion}>
             {appVersion ? `v${appVersion}` : '...'}
@@ -99,7 +103,6 @@ export const AboutView: React.FC = () => {
           </Group>
         </Box>
 
-        {/* ═══ Description ════════════════════════════════════════════════ */}
         <Box className={styles.section0} mb={20}>
           <SectionCard>
             <Text fz="var(--font-size-base)" c="var(--mantine-color-default-color)" lh={1.75}>
@@ -108,7 +111,6 @@ export const AboutView: React.FC = () => {
           </SectionCard>
         </Box>
 
-        {/* ═══ Group: Software Update ═════════════════════════════════════ */}
         <Box className={styles.section1}>
           <GroupHeader label={t('about.group.update')} />
 
@@ -181,7 +183,6 @@ export const AboutView: React.FC = () => {
           </SectionCard>
         </Box>
 
-        {/* ═══ Group: Open Source Software ════════════════════════════════ */}
         <Box className={styles.section2}>
           <GroupHeader label={t('about.group.stack')} />
 
@@ -213,10 +214,20 @@ export const AboutView: React.FC = () => {
                 <Text fz="var(--font-size-sm)" c="dimmed">{desc}</Text>
               </Group>
             ))}
+            <Flex justify="center" mt={16}>
+              <Button
+                variant="subtle"
+                color="gray"
+                size="xs"
+                leftSection={<Scale size={13} />}
+                onClick={() => void window.electronAPI.openThirdPartyLicenses()}
+              >
+                {t('about.licenses.viewAll')}
+              </Button>
+            </Flex>
           </SectionCard>
         </Box>
 
-        {/* ═══ Copyright ═══════════════════════════════════════════════════ */}
         <Box className={styles.section3}>
           <Divider mt={8} mb={16} />
           <Flex justify="center">

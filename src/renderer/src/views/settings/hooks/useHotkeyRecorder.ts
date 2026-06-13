@@ -1,4 +1,3 @@
-// src/renderer/src/views/settings/hooks/useHotkeyRecorder.ts
 import { useCallback, useEffect, useState } from 'react';
 import type React from 'react';
 import { settingsApi } from '../../../api/electronApi';

@@ -1,4 +1,4 @@
-// src/main/providers/perplexity.ts — Electron DOM-injection automation for Perplexity web
+// Electron DOM-injection automation for Perplexity web
 import type { BrowserWindow } from 'electron';
 import { navigateAndWait, isCloudflareChallengeActive, INJECTED_SLEEP_JS, INJECTED_WAIT_FOR_JS, INJECTED_INTERCEPT_COPY_JS } from './common';
 import { executeAutomationWithTimeout, countElements, dispatchFocusEvents } from './automationExecutor';

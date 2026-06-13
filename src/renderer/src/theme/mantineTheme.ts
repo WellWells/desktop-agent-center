@@ -1,10 +1,7 @@
-// src/renderer/src/theme/mantineTheme.ts
-
 import { createTheme, type MantineColorsTuple, type MantineThemeOverride } from '@mantine/core';
 import type { Theme } from '../store/themeStore';
 import { lerpHex } from './colorUtils';
 
-// ── Color tuple generation ────────────────────────────────────────────────────
 // Produces a 10-shade MantineColorsTuple from a single accent hex.
 // Accent placed at index 4 (primaryShade). 0-3 → white, 5-9 → black.
 
@@ -23,8 +20,7 @@ function generateColors(accent: string): MantineColorsTuple {
   ] as unknown as MantineColorsTuple;
 }
 
-// ── One accent per theme — all tuples are auto-generated ─────────────────────
-
+// One accent per theme — all tuples are auto-generated
 const colorTuples: Record<Theme, MantineColorsTuple> = {
   dark:        generateColors('#0969da'),
   light:       generateColors('#0969da'),
@@ -38,8 +34,6 @@ const colorTuples: Record<Theme, MantineColorsTuple> = {
   gruvbox:     generateColors('#8b6304'),
   cyberpunk:   generateColors('#008a99'),
 };
-
-// ── Shared base theme ─────────────────────────────────────────────────────────
 
 const baseTheme: MantineThemeOverride = {
   fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif',
@@ -66,24 +60,22 @@ const baseTheme: MantineThemeOverride = {
   },
 };
 
-// ── Per-theme overrides ───────────────────────────────────────────────────────
-
-export interface DacMantineTheme {
+export interface YobiMantineTheme {
   theme: MantineThemeOverride;
   colorScheme: 'light' | 'dark';
 }
 
 const LIGHT_THEMES: readonly Theme[] = ['light', 'sepia', 'rosepine'];
 
-export function getMantineTheme(dacTheme: Theme): DacMantineTheme {
-  const colorScheme: 'light' | 'dark' = LIGHT_THEMES.includes(dacTheme) ? 'light' : 'dark';
+export function getMantineTheme(yobiTheme: Theme): YobiMantineTheme {
+  const colorScheme: 'light' | 'dark' = LIGHT_THEMES.includes(yobiTheme) ? 'light' : 'dark';
 
   const theme = createTheme({
     ...baseTheme,
     primaryColor: 'brand',
     primaryShade: 4, // accent is always at index 4 in generateColors
     colors: {
-      brand: colorTuples[dacTheme],
+      brand: colorTuples[yobiTheme],
     },
   });
 

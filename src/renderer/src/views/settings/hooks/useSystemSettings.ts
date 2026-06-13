@@ -1,4 +1,3 @@
-// src/renderer/src/views/settings/hooks/useSystemSettings.ts
 import { useCallback, useEffect, useState } from 'react';
 import { settingsApi, ipcEvents } from '../../../api/electronApi';
 

@@ -1,4 +1,3 @@
-// src/renderer/src/views/settings/hooks/usePromptPrefs.ts
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { settingsApi } from '../../../api/electronApi';
 import { useI18nStore } from '../../../store/i18nStore';

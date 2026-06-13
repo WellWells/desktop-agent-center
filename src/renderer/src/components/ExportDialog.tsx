@@ -112,9 +112,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
       }}
     >
 
-        {/* Body */}
         <Flex flex={1} style={{ minHeight: 0, overflow: 'hidden' }}>
-          {/* Left column: settings */}
           <ExportSettingsPanel
             palettes={palettes}
             selectedPalette={selectedPalette}
@@ -136,7 +134,6 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
             t={t}
           />
 
-          {/* Right column: preview */}
           <ExportPreviewPanel
             background={background}
             showPrompt={showPrompt}
@@ -147,7 +144,6 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
           />
         </Flex>
 
-        {/* Footer */}
         <Group
           justify="flex-end"
           gap={8}

@@ -10,7 +10,7 @@ interface UpdaterDeps {
   sendToRenderer: (channel: string, ...args: unknown[]) => void;
 }
 
-const RELEASES_BASE_URL = 'https://github.com/WellWells/desktop-agent-center/releases';
+const RELEASES_BASE_URL = 'https://github.com/WellWells/yobi/releases';
 
 let initialized = false;
 let checking = false;

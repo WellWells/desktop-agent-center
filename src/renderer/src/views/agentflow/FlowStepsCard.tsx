@@ -1,4 +1,4 @@
-// src/renderer/src/views/agentflow/FlowStepsCard.tsx — steps section with nesting guidelines
+// steps section with nesting guidelines
 import React, { useMemo } from 'react';
 import { Box, Code, Flex, Stack, Text } from '@mantine/core';
 import { BookOpen, ChevronRight } from 'lucide-react';

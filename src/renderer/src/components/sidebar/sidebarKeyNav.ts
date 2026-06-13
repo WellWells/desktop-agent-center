@@ -1,4 +1,4 @@
-// src/renderer/src/components/sidebar/sidebarKeyNav.ts — keyboard navigation handler for the file list
+// keyboard navigation handler for the file list
 import type React from 'react';
 import type { OutputFile } from '../../../../shared/types';
 import { isTypingTarget } from '../../utils/domUtils';

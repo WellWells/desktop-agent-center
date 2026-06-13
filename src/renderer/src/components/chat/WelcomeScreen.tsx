@@ -1,4 +1,4 @@
-// src/renderer/src/components/chat/WelcomeScreen.tsx — empty-state welcome panel for ChatView
+// empty-state welcome panel for ChatView
 import React from 'react';
 import { Box, Stack, Text } from '@mantine/core';
 import { useAppStore } from '../../store/appStore';
@@ -19,7 +19,7 @@ export const WelcomeScreen: React.FC<{ activeModelUrl: string }> = ({ activeMode
   return (
     <Stack align="center" justify="center" gap={18} h="100%" c="dimmed" p="24px 20px">
       <Text fw={700} fz="var(--font-size-3xl)" lts="-0.01em" c="var(--mantine-color-text)">
-        Desktop Agent Center
+        Yobi
       </Text>
       <Text fz="var(--font-size-base)" maw={340} ta="center" lh={1.75} c="dimmed">
         {welcomeHint}

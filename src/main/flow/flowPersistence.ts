@@ -1,4 +1,4 @@
-// src/main/flow/flowPersistence.ts — flows.json disk I/O and entity id factory
+// flows.json disk I/O and entity id factory
 
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';

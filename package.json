@@ -1,16 +1,16 @@
 {
-  "name": "desktop-agent-center",
+  "name": "yobi",
   "version": "1.1.2",
-  "description": "Desktop Agent Center (DAC) — Free, no-API-key AI automation desktop app. Integrates ChatGPT/Gemini via global hotkeys, features AgentFlow visual workflows, and supports Telegram bot control. Built with Electron & React.",
+  "description": "Yobi — Free, no-API-key AI automation desktop app. Integrates ChatGPT/Gemini via global hotkeys, features AgentFlow visual workflows, and supports Telegram bot control. Built with Electron & React.",
   "author": "WellsTsai",
   "repository": {
     "type": "git",
-    "url": "https://github.com/WellWells/desktop-agent-center.git"
+    "url": "https://github.com/WellWells/yobi.git"
   },
   "bugs": {
-    "url": "https://github.com/WellWells/desktop-agent-center/issues"
+    "url": "https://github.com/WellWells/yobi/issues"
   },
-  "homepage": "https://github.com/WellWells/desktop-agent-center#readme",
+  "homepage": "https://github.com/WellWells/yobi#readme",
   "engines": {
     "node": ">=20.0.0"
   },
@@ -20,8 +20,9 @@
     "dev": "tsx scripts/electron-dev.ts",
     "build:compile": "vite build -c vite.main.config.ts && vite build -c vite.preload.config.ts && vite build -c vite.renderer.config.ts",
     "prepare:icons": "tsx scripts/generate-icons.ts",
-    "build:win": "npm run prepare:icons && npm run build:compile && electron-builder --win",
-    "build:mac": "npm run prepare:icons && npm run build:compile && electron-builder --mac",
+    "licenses:generate": "tsx scripts/generate-licenses.ts",
+    "build:win": "npm run prepare:icons && npm run build:compile && npm run licenses:generate && electron-builder --win",
+    "build:mac": "npm run prepare:icons && npm run build:compile && npm run licenses:generate && electron-builder --mac",
     "build": "npm run build:win",
     "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
     "i18n:check": "tsx scripts/i18n-check.ts"
@@ -51,9 +52,6 @@
     "lucide-react": "^1.16.0",
     "marked": "^18.0.4",
     "node-cron": "^4.2.1",
-    "postcss": "^8.5.15",
-    "postcss-preset-mantine": "^1.18.0",
-    "postcss-simple-vars": "^7.0.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-dropzone": "^15.0.0",
@@ -74,14 +72,17 @@
     "electron-builder": "^26.8.1",
     "png-to-ico": "^3.0.1",
     "png2icons": "^2.0.1",
+    "postcss": "^8.5.15",
+    "postcss-preset-mantine": "^1.18.0",
+    "postcss-simple-vars": "^7.0.1",
     "tsx": "^4.22.3",
     "typescript": "^6.0.3",
     "vite": "^8.0.14"
   },
   "build": {
-    "appId": "com.wellstsai.dac",
-    "productName": "Desktop Agent Center",
-    "executableName": "DesktopAgentCenter",
+    "appId": "com.wellstsai.yobi",
+    "productName": "Yobi",
+    "executableName": "Yobi",
     "directories": {
       "output": "dist"
     },
@@ -94,7 +95,7 @@
       {
         "provider": "github",
         "owner": "WellWells",
-        "repo": "desktop-agent-center"
+        "repo": "yobi"
       }
     ],
     "extraResources": [
@@ -110,6 +111,10 @@
       {
         "from": "LICENSE",
         "to": "LICENSE"
+      },
+      {
+        "from": "THIRD-PARTY-LICENSES.txt",
+        "to": "THIRD-PARTY-LICENSES.txt"
       }
     ],
     "win": {
@@ -120,7 +125,7 @@
       "requestedExecutionLevel": "asInvoker"
     },
     "nsis": {
-      "artifactName": "DesktopAgentCenter-${version}-win-x64-Setup.exe"
+      "artifactName": "Yobi-${version}-win-x64-Setup.exe"
     },
     "mac": {
       "icon": "assets/icon-mac.icns",
@@ -134,10 +139,10 @@
         }
       ],
       "category": "public.app-category.productivity",
-      "artifactName": "DesktopAgentCenter-${version}-mac-${arch}.${ext}"
+      "artifactName": "Yobi-${version}-mac-${arch}.${ext}"
     },
     "dmg": {
-      "artifactName": "DesktopAgentCenter-${version}-mac-${arch}.dmg"
+      "artifactName": "Yobi-${version}-mac-${arch}.dmg"
     }
   },
   "overrides": {

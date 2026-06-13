@@ -1,4 +1,4 @@
-// src/main/telegram/formatter.ts — markdown → Telegram-HTML rendering.
+// markdown → Telegram-HTML rendering.
 //
 // Telegram only supports a small HTML subset. This renders a result's markdown
 // into that subset, linkifies bare URLs, and provides the escaping/truncation

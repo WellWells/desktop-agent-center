@@ -1,4 +1,4 @@
-// src/renderer/src/components/sidebar/FileItem.tsx — single file row in the sidebar list
+// single file row in the sidebar list
 import React from 'react';
 import { Badge, Box, Flex, Stack, Text } from '@mantine/core';
 import { Circle } from 'lucide-react';

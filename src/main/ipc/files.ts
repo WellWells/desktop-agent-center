@@ -1,4 +1,4 @@
-// src/main/ipcFiles.ts — output file CRUD, snapshot capture and reveal/open handlers.
+// Output file CRUD, snapshot capture and reveal/open handlers.
 
 import { ipcMain, clipboard, nativeImage, shell } from 'electron';
 import * as path from 'node:path';

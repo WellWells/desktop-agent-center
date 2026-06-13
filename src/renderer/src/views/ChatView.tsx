@@ -66,7 +66,6 @@ export const ChatView: React.FC = () => {
   const [headerEditing, setHeaderEditing] = useState(false);
   const [headerEditValue, setHeaderEditValue] = useState('');
 
-  // hooks extracted from ChatView
   const captureExport = useCaptureExport(setExportToast);
   const { startRewrite } = useRewriteTask(setExportToast);
 
@@ -92,7 +91,6 @@ export const ChatView: React.FC = () => {
   }, [selectedFile?.path]);
 
 
-  // auto-dismiss export toast after 4.5s
   useEffect(() => {
     if (!exportToast) return;
     const timer = window.setTimeout(() => setExportToast((cur) => (

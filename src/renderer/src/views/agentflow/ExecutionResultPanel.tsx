@@ -1,4 +1,4 @@
-// src/renderer/src/views/agentflow/ExecutionResultPanel.tsx — per-step execution result list
+// per-step execution result list
 import React from 'react';
 import { Box, Code, Group, Stack, Text } from '@mantine/core';
 import { CheckCircle2, History, XCircle } from 'lucide-react';

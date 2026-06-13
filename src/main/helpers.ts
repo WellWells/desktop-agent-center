@@ -1,4 +1,4 @@
-// src/main/helpers.ts — Shared utility functions for the main process
+// Shared utility functions for the main process
 import { app, Notification, session } from 'electron';
 import type { BrowserWindow } from 'electron';
 import * as path from 'node:path';
@@ -147,7 +147,6 @@ export function maskToken(token: string): string {
   return `${trimmed.slice(0, 4)}...${trimmed.slice(-4)}`;
 }
 
-// ── Asset path resolution ─────────────────────────────────────────────────────
 // Packaged : <resources>/assets/<filename>  (extraResources copies assets/ there)
 // Dev      : __dirname = out/main/ → ../../assets → project root/assets
 //            Using __dirname is more reliable than app.getAppPath() in dev mode.

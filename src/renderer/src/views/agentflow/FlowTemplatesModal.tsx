@@ -1,4 +1,3 @@
-// src/renderer/src/views/agentflow/FlowTemplatesModal.tsx
 // Modal for selecting and loading built-in flow templates.
 import React from 'react';
 import { Badge, Box, Button, Group, Modal, Stack, Text } from '@mantine/core';

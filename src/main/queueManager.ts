@@ -1,4 +1,4 @@
-// src/main/queueManager.ts — Task queue for serialised Gemini requests
+// Task queue for serialised Gemini requests
 import type { QueueState, QueueTaskItem, Task } from '../shared/types';
 
 type QueueListener = (state: QueueState) => void;

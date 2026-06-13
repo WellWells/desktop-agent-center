@@ -1,4 +1,3 @@
-// src/renderer/src/components/ToggleSwitch.tsx
 // Standardized Switch with enforced visual style. Use instead of bare Mantine <Switch>.
 import React from 'react';
 import { Switch } from '@mantine/core';

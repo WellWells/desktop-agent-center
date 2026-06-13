@@ -1,4 +1,3 @@
-// src/renderer/src/components/ContextMenuPortal.tsx
 // Reusable context menu rendered at a fixed screen position.
 // Eliminates the 0x0 anchor hack and duplicated global-listener pattern.
 import React, { useEffect } from 'react';

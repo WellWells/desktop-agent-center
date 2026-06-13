@@ -1,4 +1,3 @@
-// src/renderer/src/store/themeStore.ts
 import { create } from 'zustand';
 import type { MantineThemeOverride } from '@mantine/core';
 import { getMantineTheme, buildCssVariablesResolver } from '../theme';
@@ -27,7 +26,6 @@ function resolveTheme(raw: string | null | undefined): Theme {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-// ── Initial theme (synchronous, before React mounts) ─────────────────────────
 const _initial: Theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 const _initialMantine = getMantineTheme(_initial);
 

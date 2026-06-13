@@ -1,4 +1,4 @@
-// src/main/ipcLocale.ts — language list and locale change IPC handlers.
+// Language list and locale change IPC handlers.
 
 import { ipcMain } from 'electron';
 import * as fs from 'node:fs/promises';

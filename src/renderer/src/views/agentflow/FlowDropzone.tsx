@@ -1,4 +1,3 @@
-// src/renderer/src/views/agentflow/FlowDropzone.tsx
 // Full-page drag-and-drop overlay for importing flow JSON files into AgentFlow.
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -52,7 +51,6 @@ export const FlowDropzone: React.FC<FlowDropzoneProps> = ({ t, onImport, childre
       <input {...getInputProps()} />
       {children}
 
-      {/* Drag overlay */}
       {isDragActive && (
         <Flex
           pos="absolute"

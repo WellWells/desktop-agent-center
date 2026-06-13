@@ -1,4 +1,4 @@
-// src/renderer/src/env.d.ts — Global type shims for renderer process
+// Global type shims for renderer process
 /// <reference types="vite/client" />
 
 import type { ElectronAPI } from '../../preload/index';

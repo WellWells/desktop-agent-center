@@ -1,4 +1,3 @@
-// src/renderer/src/components/SelectDropdown.tsx
 // Themed Select wrapper — use instead of bare Mantine <Select> for consistent dark-theme styling.
 import React from 'react';
 import { Select } from '@mantine/core';

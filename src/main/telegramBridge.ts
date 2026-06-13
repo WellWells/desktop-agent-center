@@ -1,4 +1,4 @@
-// src/main/telegramBridge.ts — Telegram settings snapshot & status helpers
+// Telegram settings snapshot & status helpers
 import type {
   TelegramRuntimeSnapshot,
   TelegramSettingsSnapshot,

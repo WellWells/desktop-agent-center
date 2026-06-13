@@ -1,4 +1,4 @@
-// src/main/userAgent.ts — Browser identity used for remote provider pages.
+// Browser identity used for remote provider pages.
 
 function getPlatformToken(): string {
   if (process.platform === 'darwin') {

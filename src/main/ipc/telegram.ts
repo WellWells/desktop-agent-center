@@ -1,4 +1,4 @@
-// src/main/ipcTelegram.ts — Telegram settings IPC handlers.
+// Telegram settings IPC handlers.
 
 import { ipcMain } from 'electron';
 import { IPC } from '../../shared/types';

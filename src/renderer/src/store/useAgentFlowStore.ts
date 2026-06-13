@@ -1,4 +1,4 @@
-// src/renderer/src/store/useAgentFlowStore.ts — AgentFlow Zustand store
+// AgentFlow Zustand store
 import { create } from 'zustand';
 import { useI18nStore } from './i18nStore';
 import type {

@@ -1,4 +1,3 @@
-// src/renderer/src/store/i18nStore.ts
 import { create } from 'zustand';
 
 type Translations = Record<string, string>;

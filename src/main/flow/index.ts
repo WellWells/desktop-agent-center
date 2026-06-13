@@ -1,4 +1,4 @@
-// src/main/flow/index.ts — public entry for the AgentFlow domain.
+// public entry for the AgentFlow domain.
 //
 // Execution engine (executor + skills), persistence/triggers (flowManager) and
 // shared data paths live under flow/. External code imports from here.

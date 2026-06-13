@@ -1,4 +1,4 @@
-// src/main/bootstrap/traySetup.ts — Tray setup and close-to-tray behavior
+// Tray setup and close-to-tray behavior
 //
 // Builds the TrayDeps object consumed by tray.ts, performs initial tray
 // creation (including --hidden startup), and installs the main-window close
@@ -59,7 +59,7 @@ export function setupTrayAndCloseBehavior(): void {
     if (!isTrayCreated()) createTray(getTrayDeps());
   }
 
-  // ── Main window close handler (first-time dialog + tray hide) ───────────
+  // Main window close handler (first-time dialog + tray hide)
   setMainWindowCloseHandler((event) => {
     // If tray is active and user chose to hide to tray: just hide
     if (config.closeToTray) {

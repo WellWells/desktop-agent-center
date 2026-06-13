@@ -35,7 +35,6 @@ export const AiSection: React.FC<Props> = ({
   <Box>
     {isSearching && <GroupHeader label={t('settings.group.ai')} />}
 
-    {/* ─ Response Timeout ─ */}
     <SectionCard style={{ marginBottom: sectionGap, display: showSection(TAG_SETS.timeout, 'ai') ? 'block' : 'none' }}>
       <SectionTitle icon={<Timer size={15} />} label={t('settings.responseTimeout.title')} />
       <Group gap={10} align="center">
@@ -103,7 +102,6 @@ export const AiSection: React.FC<Props> = ({
       </Text>
     </SectionCard>
 
-    {/* ─ Prompt Preferences ─ */}
     <Box display={showSection(TAG_SETS.prompt, 'ai') ? 'block' : 'none'}>
       <SectionCard style={{ marginBottom: sectionGap }}>
 
@@ -122,10 +120,8 @@ export const AiSection: React.FC<Props> = ({
           />
         </Box>
 
-        {/* Global Persona */}
         <SectionTitle icon={<SlidersHorizontal size={15} />} label={t('settings.prompt.persona.title')} />
 
-        {/* Nickname */}
         <Box mb={12}>
           <Stack gap={6} mb={6}>
             <Group gap={6} align="center">
@@ -149,7 +145,6 @@ export const AiSection: React.FC<Props> = ({
           <Text fz="var(--font-size-sm)" mt={4} c="dimmed">{t('settings.prompt.nickname.hint')}</Text>
         </Box>
 
-        {/* Tone */}
         <Box mb={12}>
           <Group gap={6} align="center" mb={6}>
             <MessageSquare size={13} color="var(--mantine-color-dimmed)" style={{ flexShrink: 0 }} />
@@ -169,7 +164,6 @@ export const AiSection: React.FC<Props> = ({
           />
         </Box>
 
-        {/* Length */}
         <Box mb={14}>
           <Group gap={6} align="center" mb={6}>
             <AlignJustify size={13} color="var(--mantine-color-dimmed)" style={{ flexShrink: 0 }} />
@@ -190,7 +184,6 @@ export const AiSection: React.FC<Props> = ({
 
         <Box h={1} bg="var(--mantine-color-default-border)" my={14} />
 
-        {/* Custom Instructions */}
         <SectionTitle icon={<FileText size={15} />} label={t('settings.prompt.templates.title')} mb={10} />
         <AppTextarea
           value={prefs.promptPrefs.customInstructions}
@@ -216,7 +209,6 @@ export const AiSection: React.FC<Props> = ({
         />
       </SectionCard>
 
-      {/* Prompt Preview */}
       <SectionCard style={{ marginBottom: sectionGap }}>
         <SectionTitle icon={<Eye size={15} />} label={t('settings.prompt.preview.title')} mb={8} />
         {prefs.combinedPromptPreview ? (

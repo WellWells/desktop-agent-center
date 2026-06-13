@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🤖 Desktop Agent Center
+# 🤖 Yobi
 
 **The free, no-API-key AI automation desktop app**
 
@@ -8,7 +8,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS-blue)](#-quick-start)
 [![Electron](https://img.shields.io/badge/Electron-42-47848F?logo=electron)](https://www.electronjs.org/)
 [![No API Key](https://img.shields.io/badge/API%20Key-Not%20Required-brightgreen)](#-highlights)
-[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](https://github.com/WellWells/desktop-agent-center/pulls)
+[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](https://github.com/WellWells/yobi/pulls)
 
 **[English](README.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md)**
 
@@ -16,15 +16,15 @@
 
 ---
 
-**Desktop Agent Center (DAC)** is a local-first, open-source AI automation tool that runs on your desktop. It bridges your clipboard and global hotkeys directly to leading AI providers — **ChatGPT, Gemini, Perplexity, and Duck.ai** — with no API keys, no subscription fees, and no credit card required.
+**Yobi** is a local-first, open-source AI automation tool that runs on your desktop. It bridges your clipboard and global hotkeys directly to leading AI providers — **ChatGPT, Gemini, Perplexity, and Duck.ai** — with no API keys, no subscription fees, and no credit card required.
 
-Unlike paid automation platforms (e.g., OpenClaw, Zapier AI, n8n cloud) that charge from day one, DAC is **completely free** and uses the same AI web interfaces you already have open in your browser. Just install, press a hotkey, and your clipboard content is already being processed by AI.
+Unlike paid automation platforms (e.g., OpenClaw, Zapier AI, n8n cloud) that charge from day one, Yobi is **completely free** and uses the same AI web interfaces you already have open in your browser. Just install, press a hotkey, and your clipboard content is already being processed by AI.
 
 ---
 
 ## Table of Contents
 
-- [🤖 Desktop Agent Center](#-desktop-agent-center)
+- [🤖 Yobi](#-yobi)
   - [Table of Contents](#table-of-contents)
   - [✨ Highlights](#-highlights)
   - [🚀 Quick Start](#-quick-start)
@@ -45,7 +45,7 @@ Unlike paid automation platforms (e.g., OpenClaw, Zapier AI, n8n cloud) that cha
     - [Capture \& Export](#capture--export)
     - [General Settings](#general-settings)
     - [Config Backup](#config-backup)
-  - [⚖️ Why DAC vs. Paid Tools?](#️-why-dac-vs-paid-tools)
+  - [⚖️ Why Yobi vs. Paid Tools?](#️-why-yobi-vs-paid-tools)
   - [🔒 Security \& Privacy](#-security--privacy)
   - [🛠️ Development](#️-development)
     - [Tech Stack](#tech-stack)
@@ -79,8 +79,8 @@ Unlike paid automation platforms (e.g., OpenClaw, Zapier AI, n8n cloud) that cha
 ### Install & Run
 
 ```bash
-git clone https://github.com/WellWells/desktop-agent-center.git
-cd desktop-agent-center
+git clone https://github.com/WellWells/yobi.git
+cd yobi
 npm install
 npm run dev
 ```
@@ -88,9 +88,9 @@ npm run dev
 ### First Use (4 Steps)
 
 1. **Login** (optional) — Open the in-app browser and sign in to ChatGPT / Gemini / Perplexity.
-2. **Enable tray** — Go to **Settings → General → System Tray** to keep DAC running in the background.
+2. **Enable tray** — Go to **Settings → General → System Tray** to keep Yobi running in the background.
 3. **Select text** — Highlight any text in any application.
-4. **Press `Alt+G`** — DAC sends it to your chosen AI, writes the result back to your clipboard, and auto-saves the response.
+4. **Press `Alt+G`** — Yobi sends it to your chosen AI, writes the result back to your clipboard, and auto-saves the response.
 
 > **Tip:** The hotkey is fully customizable in **Settings → General → Hotkey**. On macOS the default is `Command+G`.
 
@@ -125,7 +125,7 @@ npm run dev
 
 ## 📦 Pre-built Downloads
 
-Download the latest release from the [**Releases**](https://github.com/WellWells/desktop-agent-center/releases) page:
+Download the latest release from the [**Releases**](https://github.com/WellWells/yobi/releases) page:
 
 | Platform | Format                                 |
 | -------- | -------------------------------------- |
@@ -136,7 +136,7 @@ Download the latest release from the [**Releases**](https://github.com/WellWells
 
 ## 🔗 AgentFlow — Visual Workflow Automation
 
-AgentFlow is DAC's visual automation engine. Chain **LLM calls, data sources, and Telegram output** into fully automated pipelines — no coding required. Trigger by hotkey, schedule, or Telegram command.
+AgentFlow is Yobi's visual automation engine. Chain **LLM calls, data sources, and Telegram output** into fully automated pipelines — no coding required. Trigger by hotkey, schedule, or Telegram command.
 
 ### Triggers
 
@@ -186,7 +186,7 @@ Flows can be **exported and shared** as `.json` files, or imported via file or U
 
 ## 📱 Telegram Bot Integration
 
-Connect DAC to Telegram to control your AI agent from anywhere:
+Connect Yobi to Telegram to control your AI agent from anywhere:
 
 1. **Create a bot** — Message [@BotFather](https://t.me/BotFather) on Telegram and get your bot token.
 2. **Add token** — Enter it in **Settings → Telegram**.
@@ -232,7 +232,7 @@ Export any AI response as a beautifully styled image or PDF:
 | **Theme**             | Light · Dark · Auto (follows OS)            |
 | **Layout**            | Stacked · Side-by-side                      |
 | **Response Timeout**  | Maximum wait time for an AI response        |
-| **Launch at Startup** | Auto-start DAC when your computer boots     |
+| **Launch at Startup** | Auto-start Yobi when your computer boots     |
 | **Close to Tray**     | Minimize to system tray instead of quitting |
 | **Markdown Zoom**     | Adjust response text size (70%–200%)        |
 
@@ -242,9 +242,9 @@ Export and import your full settings as a JSON file via **Settings → Advanced*
 
 ---
 
-## ⚖️ Why DAC vs. Paid Tools?
+## ⚖️ Why Yobi vs. Paid Tools?
 
-|                      | Desktop Agent Center           | OpenClaw / n8n Cloud / Zapier AI |
+|                      | Yobi           | OpenClaw / n8n Cloud / Zapier AI |
 | -------------------- | ------------------------------ | -------------------------------- |
 | Price                | **Free forever**               | Paid subscription / credits      |
 | API Key              | **Not required**               | Usually required                 |
@@ -319,8 +319,8 @@ This project is licensed under the **[MIT License](LICENSE)** — free to use, m
 
 <div align="center">
 
-If DAC saves you time or money, please ⭐ **Star** this repository — it helps others discover it!
+If Yobi saves you time or money, please ⭐ **Star** this repository — it helps others discover it!
 
-**[Report a Bug](https://github.com/WellWells/desktop-agent-center/issues) · [Request a Feature](https://github.com/WellWells/desktop-agent-center/issues) · [Discussions](https://github.com/WellWells/desktop-agent-center/discussions)**
+**[Report a Bug](https://github.com/WellWells/yobi/issues) · [Request a Feature](https://github.com/WellWells/yobi/issues) · [Discussions](https://github.com/WellWells/yobi/discussions)**
 
 </div>

@@ -1,6 +1,5 @@
-// src/shared/types.ts — Shared type definitions between main/preload/renderer
+// Shared type definitions between main/preload/renderer
 
-// ── AI Provider Registry ─────────────────────────────────────────────────────
 // Single source of truth for all AI provider URLs and labels.
 // To add a new provider: add an entry here, then create a provider module
 // under src/main/providers/ and register it in providers/index.ts.
@@ -28,7 +27,6 @@ export const PROVIDER_LABELS: Record<Provider, string> = {
   duckai: 'Duck AI',
 } as const;
 
-// ── IPC Channel Names ────────────────────────────────────────────────────────
 export const IPC = {
   // Main → Renderer
   LOG: 'log',
@@ -69,6 +67,7 @@ export const IPC = {
   SET_CURRENT_LOCALE: 'language:set-current',
   SET_LOCALE_AUTO: 'language:set-auto',
   GET_LICENSE: 'license:get',
+  OPEN_THIRD_PARTY_LICENSES: 'license:open-third-party',
   OPEN_EXTERNAL_URL: 'url:open-external',
   TRIGGER_PROMPT: 'prompt:trigger',
   TRIGGER_PROMPT_WITH_OPTIONS: 'prompt:trigger-with-options',
@@ -100,12 +99,10 @@ export const IPC = {
   UPDATE_RESPONSE_TIMEOUT: 'response:update-timeout',
   GET_APP_VERSION: 'app:get-version',
   GET_APP_ICON_DATA_URL: 'app:get-icon-data-url',
-  // Tray / window behavior
   GET_CLOSE_TO_TRAY: 'tray:get-close-to-tray',
   UPDATE_CLOSE_TO_TRAY: 'tray:update-close-to-tray',
   GET_AUTO_SHOW_TRAY: 'tray:get-auto-show-tray',
   UPDATE_AUTO_SHOW_TRAY: 'tray:update-auto-show-tray',
-  // Startup auto-launch
   GET_LAUNCH_AT_STARTUP: 'startup:get-launch',
   UPDATE_LAUNCH_AT_STARTUP: 'startup:update-launch',
   LAUNCH_AT_STARTUP_CHANGED: 'startup:launch-changed',  // main → renderer push
@@ -128,13 +125,11 @@ export const IPC = {
   UPDATE_LAYOUT_MODE: 'ui:update-layout-mode',
   GET_MARKDOWN_ZOOM: 'ui:get-markdown-zoom',
   UPDATE_MARKDOWN_ZOOM: 'ui:update-markdown-zoom',
-  // Capture / export settings
   GET_CAPTURE_SETTINGS: 'capture:get-settings',
   UPDATE_CAPTURE_SETTINGS: 'capture:update-settings',
   OPEN_CONFIG_DIR: 'config:open-dir',
   EXPORT_CONFIG: 'config:export',
   IMPORT_CONFIG: 'config:import',
-  // AgentFlow (Flow Automation)
   FLOW_GET_ALL: 'flow:get-all',
   FLOW_SAVE: 'flow:save',
   FLOW_DELETE: 'flow:delete',
@@ -145,10 +140,8 @@ export const IPC = {
   FLOW_EXECUTION_STARTED: 'flow:execution-started',
   FLOW_EXECUTION_ENDED: 'flow:execution-ended',
   FLOW_EXPORT: 'flow:export',
-  // RSS Checkpoint
   RSS_HAS_CHECKPOINT: 'rss:has-checkpoint',
   RSS_CLEAR_CHECKPOINT: 'rss:clear-checkpoint',
-  // Scraper Checkpoint
   SCRAPER_HAS_CHECKPOINT: 'scraper:has-checkpoint',
   SCRAPER_CLEAR_CHECKPOINT: 'scraper:clear-checkpoint',
 } as const;
@@ -158,16 +151,13 @@ export interface FlowExecutionEvent {
   name: string;
 }
 
-// ── Status ───────────────────────────────────────────────────────────────────
 export type AppStatus = 'idle' | 'processing';
 
-// ── Worker Window Attention ──────────────────────────────────────────────────
 // Pushed main → renderer so the title-bar worker button can reflect why the
 // worker window needs the user: 'login' (sign-in required) or 'verification'
 // (Cloudflare challenge). 'idle' clears the attention indicator.
 export type WorkerAttention = 'idle' | 'login' | 'verification';
 
-// ── Queue ────────────────────────────────────────────────────────────────────
 export interface QueueState {
   total: number;
   current: number;
@@ -181,7 +171,6 @@ export interface QueueTaskItem {
   status: 'running' | 'queued';
 }
 
-// ── File ─────────────────────────────────────────────────────────────────────
 export interface OutputFile {
   name: string;
   path: string;
@@ -205,7 +194,6 @@ export interface UpdateAvailablePayload {
   releaseUrl: string;
 }
 
-// ── Telegram ──────────────────────────────────────────────────────────────────
 export type TelegramRuntimeStatus = 'idle' | 'starting' | 'running' | 'stopping' | 'error';
 export type TelegramReplyMode = 'markdown' | 'png' | 'webp' | 'pdf';
 
@@ -255,7 +243,6 @@ export interface TelegramSettingsSnapshot {
   pairing: TelegramPairingState;
 }
 
-// ── Task ─────────────────────────────────────────────────────────────────────
 export interface Task {
   id: string;
   prompt: string;
@@ -313,8 +300,6 @@ export interface MarkdownCaptureResult {
   filePath?: string;
   error?: string;
 }
-
-// ── AgentFlow (Flow Automation) ──────────────────────────────────────────────
 
 export type SkillType = 'shell' | 'browser' | 'llm' | 'clipboard' | 'utility' | 'bot' | 'rss' | 'stop' | 'comment' | 'scraper' | 'loop' | 'end_loop' | 'if' | 'end_if';
 
@@ -384,7 +369,6 @@ export interface FlowExecutionResult {
   completedAt: string;
 }
 
-// ── Prompt Preferences ───────────────────────────────────────────────────────
 export type PromptTone = 'default' | 'professional' | 'casual' | 'direct';
 export type PromptLength = 'auto' | 'concise' | 'detailed';
 

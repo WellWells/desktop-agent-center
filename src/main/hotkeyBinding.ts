@@ -1,4 +1,4 @@
-// src/main/hotkeyBinding.ts — registers the global capture hotkey.
+// Registers the global capture hotkey.
 //
 // On trigger: captures the selected text, resolves it (URL → analysis prompt when
 // applicable) and enqueues a task. On macOS, guards against the missing
@@ -33,7 +33,7 @@ export function bindHotkey(deps: HotkeyDeps): void {
       const errorMsg = langData['hotkey.error.accessibility'] ??
         'Accessibility permission required. Go to System Preferences → Privacy & Security → Accessibility and enable this app.';
       sendLog(`❌ ${errorMsg}`);
-      sendWebNotification('Desktop Agent Center', errorMsg, 'warning');
+      sendWebNotification('Yobi', errorMsg, 'warning');
       if (!_accessibilityPrompted) {
         _accessibilityPrompted = true;
         promptMacosAccessibility();
@@ -63,7 +63,7 @@ export function bindHotkey(deps: HotkeyDeps): void {
     });
     sendLog(`[${id}] 🔥 Queued for ${getProviderLabel(config.targetUrl)} (queue size: ${queue.size + 1})`);
 
-    const notifyTitle = langData['notify.queued.title'] ?? 'Desktop Agent Center';
+    const notifyTitle = langData['notify.queued.title'] ?? 'Yobi';
     const notifyBodyTemplate = langData['notify.queued.body'] ?? 'Queued: "{{prompt}}"';
     const compactPrompt = prompt.replace(/\s+/g, ' ').trim().slice(0, 36);
     const displayPrompt = compactPrompt.length < prompt.replace(/\s+/g, ' ').trim().length

@@ -1,4 +1,4 @@
-// src/main/flow/flowQueue.ts — serial execution queue for flow runs
+// serial execution queue for flow runs
 //
 // Chains executions on a single promise so concurrent flow triggers never race
 // on shared resources (worker window, clipboard, etc.).

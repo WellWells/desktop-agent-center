@@ -1,4 +1,4 @@
-// src/main/telegram/fetchCompat.ts — fetch shim for grammy on Node.js 18+.
+// fetch shim for grammy on Node.js 18+.
 //
 // Patches request init for streaming bodies (duplex) and relays grammy's
 // non-native abort signals onto a native AbortController so undici accepts them.

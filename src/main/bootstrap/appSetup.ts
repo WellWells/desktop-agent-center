@@ -1,4 +1,4 @@
-// src/main/bootstrap/appSetup.ts — App foundation setup run inside app.whenReady()
+// App foundation setup run inside app.whenReady()
 //
 // Covers platform icons (macOS dock/About panel), initial i18n cache loading,
 // and main/worker window creation with helper-level wiring.
@@ -32,7 +32,7 @@ export function setupPlatformIcons(): void {
   app.dock?.setIcon(dockIcon);
   // macOS native About panel (Help → About… or Cmd+I).
   app.setAboutPanelOptions({
-    applicationName: 'Desktop Agent Center',
+    applicationName: 'Yobi',
     iconPath: getAssetPath('icon-mac.png'),
   });
 }

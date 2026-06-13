@@ -1,4 +1,4 @@
-// src/main/output.ts — Save Gemini responses to disk as Markdown
+// Save Gemini responses to disk as Markdown
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import dayjs from 'dayjs';

@@ -1,4 +1,4 @@
-// src/main/files.ts — Output file management (list, search, build metadata)
+// Output file management (list, search, build metadata)
 import { app } from 'electron';
 import * as path from 'node:path';
 import * as fs from 'node:fs/promises';

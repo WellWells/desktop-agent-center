@@ -1,4 +1,4 @@
-// src/main/telegram/pairing.ts — pairing conversation and pairing command handlers.
+// pairing conversation and pairing command handlers.
 //
 // Covers the /start and /init commands plus the interactive pairing-code
 // conversation. Pairing-code persistence itself lives in dmPolicy.ts; this

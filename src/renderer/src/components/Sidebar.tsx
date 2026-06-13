@@ -1,4 +1,3 @@
-// src/renderer/src/components/Sidebar.tsx
 import React, { startTransition, useCallback, useEffect, useRef, useState } from 'react';
 import { Badge, Box, Menu as MMenu, Stack, Text } from '@mantine/core';
 import { useVirtualizer } from '@tanstack/react-virtual';

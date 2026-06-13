@@ -1,4 +1,4 @@
-// src/renderer/src/views/agentflow/AddStepMenu.tsx — categorized "add step" dropdown menu
+// categorized "add step" dropdown menu
 import React, { useMemo } from 'react';
 import { Button, Menu, SimpleGrid, Stack, Text } from '@mantine/core';
 import { Plus } from 'lucide-react';

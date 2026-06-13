@@ -1,4 +1,4 @@
-// src/renderer/src/components/exportDialog/ExportPreviewPanel.tsx — right preview column of ExportDialog
+// right preview column of ExportDialog
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Box, Group, Stack, Text } from '@mantine/core';

@@ -1,4 +1,4 @@
-// src/main/ipcSettings.ts — general settings IPC handlers (hotkey, AI URL, prompt,
+// General settings IPC handlers (hotkey, AI URL, prompt,
 // theme/layout, config import/export, tray behavior, license/version).
 
 import { ipcMain, app, shell } from 'electron';

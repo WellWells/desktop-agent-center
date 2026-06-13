@@ -1,4 +1,4 @@
-// src/main/config.ts — Centralized configuration via electron-store + safeStorage
+// Centralized configuration via electron-store + safeStorage
 //
 // On-disk: <userData>/config.json in packaged app, <cwd>/config.json in dev mode.
 // Sensitive fields (Telegram botToken) are encrypted with Electron's safeStorage
@@ -23,7 +23,6 @@ import {
   deserializePairingConfig,
 } from './configNormalizers';
 
-// ── Config file path ──────────────────────────────────────────────────────────
 // Dev       : project root / config.json (app is not packaged, use cwd)
 // Packaged  : userData / config.json (stable, survives one-file temp extraction)
 function getConfigDir(): string {
@@ -54,7 +53,6 @@ function migrateLegacyWindowsConfigIfNeeded(configDir: string): void {
   }
 }
 
-// ── electron-store instance ───────────────────────────────────────────────────
 const configDir = getConfigDir();
 migrateLegacyWindowsConfigIfNeeded(configDir);
 
@@ -64,7 +62,7 @@ const store = new Store<StoredConfig>({
   defaults: defaultStored,
 });
 
-// ── Build in-memory Config from store (botToken left empty until app.ready) ──
+// Build in-memory Config from store (botToken left empty until app.ready)
 function buildConfigFromStore(): Config {
   const stored = store.store as StoredConfig & { telegram: StoredTelegramConfig & { botToken?: string } };
   const { telegram: { botTokenEncrypted: _enc, ...telegramRest }, ...rest } = stored;
@@ -74,10 +72,9 @@ function buildConfigFromStore(): Config {
   });
 }
 
-// ── Public mutable config object ──────────────────────────────────────────────
 const config: Config = buildConfigFromStore();
 
-// ── initSensitiveConfig — call from index.ts after app.whenReady() ────────────
+// initSensitiveConfig — call from index.ts after app.whenReady()
 // Decrypts botToken and migrates legacy plaintext token from old config format.
 function initSensitiveConfig(): void {
   const stored = store.store as StoredConfig & { telegram: StoredTelegramConfig & { botToken?: string } };
@@ -95,7 +92,6 @@ function initSensitiveConfig(): void {
   }
 }
 
-// ── saveConfig ────────────────────────────────────────────────────────────────
 function saveConfig(cfg: Partial<Config>): void {
   const { telegram: partialTelegram, ...nonTelegramPartial } = cfg;
 
@@ -103,7 +99,7 @@ function saveConfig(cfg: Partial<Config>): void {
   const mergedBase = normalizeConfig({
     ...config,
     ...nonTelegramPartial,
-    telegram: config.telegram, // preserve telegram in normalizeConfig call
+    telegram: config.telegram,
   });
   const { telegram: _ignored, ...storedBase } = mergedBase;
 
@@ -123,11 +119,10 @@ function saveConfig(cfg: Partial<Config>): void {
     },
   } as StoredConfig;
 
-  // Update in-memory config
   Object.assign(config, { ...mergedBase, telegram: mergedTelegram });
 }
 
-// ── loadConfig — returns current in-memory config ─────────────────────────────
+// loadConfig — returns current in-memory config
 function loadConfig(): Config {
   return config;
 }

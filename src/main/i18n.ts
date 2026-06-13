@@ -1,4 +1,4 @@
-// src/main/i18n.ts — Internationalization helpers for the main process
+// Internationalization helpers for the main process
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { getLanguageDir } from './files';

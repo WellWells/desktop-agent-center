@@ -1,4 +1,3 @@
-// src/renderer/src/components/SectionCard.tsx
 // Bordered card wrapper used in settings and other views.
 import React from 'react';
 import { Paper } from '@mantine/core';

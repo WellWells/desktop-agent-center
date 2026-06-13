@@ -1,4 +1,4 @@
-// src/renderer/src/components/exportDialog/ExportSettingsPanel.tsx — left settings column of ExportDialog
+// left settings column of ExportDialog
 import React from 'react';
 import { ActionIcon, Box, Button, Flex, Group, Stack, Switch, Text } from '@mantine/core';
 import { Check, FileText, Image as ImageIcon, Zap } from 'lucide-react';
@@ -80,7 +80,6 @@ export const ExportSettingsPanel: React.FC<ExportSettingsPanelProps> = ({
     style={{ borderRight: '1px solid var(--border)', overflowY: 'auto', flexShrink: 0 }}
   >
 
-    {/* Format selector */}
     <Box>
       <SectionLabel>{t('capture.format')}</SectionLabel>
       <Stack gap={6}>
@@ -137,7 +136,6 @@ export const ExportSettingsPanel: React.FC<ExportSettingsPanelProps> = ({
       />
     </Box>
 
-    {/* Show/hide toggles */}
     <Box>
       <SectionLabel>{t('capture.visible')}</SectionLabel>
       <Stack gap={10}>

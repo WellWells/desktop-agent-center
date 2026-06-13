@@ -1,4 +1,4 @@
-// src/main/ipcFlow.ts — AgentFlow CRUD and feed-checkpoint IPC handlers.
+// AgentFlow CRUD and feed-checkpoint IPC handlers.
 
 import { ipcMain, app } from 'electron';
 import * as path from 'node:path';

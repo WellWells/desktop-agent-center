@@ -1,4 +1,4 @@
-// src/main/pageLoader.ts — Page-loading machinery for URL parsing
+// Page-loading machinery for URL parsing
 //
 // Uses a hidden Electron BrowserWindow (real Chromium) to load JS-rendered pages.
 // Auth and bot challenges are not bypassed; challenge pages may be returned as-is.

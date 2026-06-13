@@ -1,8 +1,7 @@
-// src/renderer/src/components/titlebar/constants.tsx — TitleBar static constants and helpers
+// TitleBar static constants and helpers
 import React from 'react';
 import { Minus, Plus, X } from 'lucide-react';
 
-// ─── Module-level statics (computed once, never change) ────────────────────────
 export const noDrag: React.CSSProperties = { WebkitAppRegion: 'no-drag' };
 const navigatorWithUserAgentData = navigator as Navigator & { userAgentData?: { platform?: string } };
 export const isMac = (navigatorWithUserAgentData.userAgentData?.platform ?? navigator.platform ?? '').toLowerCase().includes('mac');
@@ -13,11 +12,9 @@ export const titleBarDynStyle: React.CSSProperties = {
   WebkitAppRegion: 'drag' as React.CSSProperties['WebkitAppRegion'],
 };
 
-// Static style constants extracted from components to avoid per-render object allocation.
-export const brandIconEmptyStyle: React.CSSProperties = { flexShrink: 0 };
-export const brandIconImgStyle: React.CSSProperties = { borderRadius: 4, flexShrink: 0, objectFit: 'contain' };
-export const brandGroupStyle: React.CSSProperties = { flexShrink: 0, minWidth: 0 };
-export const brandTextStyle: React.CSSProperties = { whiteSpace: 'nowrap' };
+// macOS traffic-light color when the window is inactive — a neutral gray that
+// reads correctly on both light and dark title bars (mirrors native behavior).
+export const macInactiveColor = 'rgba(140, 140, 140, 0.45)';
 export const navScrollStyle: React.CSSProperties = {
   ...noDrag,
   minWidth: 0,
@@ -26,7 +23,6 @@ export const navScrollStyle: React.CSSProperties = {
 };
 export const statusWrapperStyle: React.CSSProperties = { ...noDrag, flexShrink: 0 };
 
-// ─── Window action helpers ──────────────────────────────────────────────────────
 export function doWindowAction(action: 'minimize' | 'maximize' | 'close'): void {
   if (action === 'minimize') { window.electronAPI.minimizeWindow(); return; }
   if (action === 'maximize') { window.electronAPI.maximizeWindow(); return; }
@@ -39,7 +35,6 @@ export function getWindowActionTitle(t: (k: string) => string, action: 'minimize
   return t('window.close');
 }
 
-// ─── Mac traffic-light button data ─────────────────────────────────────────────
 export const macWindowButtonDefs: Array<{ action: 'close' | 'minimize' | 'maximize'; color: string; icon: React.ReactNode }> = [
   { action: 'close', color: '#ff5f57', icon: <X size={9} strokeWidth={2.3} /> },
   { action: 'minimize', color: '#febc2e', icon: <Minus size={9} strokeWidth={2.3} /> },
@@ -52,7 +47,6 @@ const windowsMaximizeIcon = (
   </svg>
 );
 
-// ─── Windows button data ────────────────────────────────────────────────────────
 export type WinBtnAction = 'minimize' | 'maximize' | 'close';
 
 export const winButtonDefs: Array<{ action: WinBtnAction }> = [

@@ -1,4 +1,4 @@
-// src/main/providers/duckai.ts — Electron DOM-injection automation for Duck AI web
+// Electron DOM-injection automation for Duck AI web
 import type { BrowserWindow } from 'electron';
 import { navigateAndWait, sleep } from './common';
 import { executeAutomationWithTimeout, countElements, dispatchFocusEvents } from './automationExecutor';

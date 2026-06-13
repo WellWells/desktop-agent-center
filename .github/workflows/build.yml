@@ -131,10 +131,10 @@ jobs:
         run: |
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             echo "tag=$GITHUB_REF_NAME" >> $GITHUB_OUTPUT
-            echo "title=Desktop Agent Center $GITHUB_REF_NAME" >> $GITHUB_OUTPUT
+            echo "title=Yobi $GITHUB_REF_NAME" >> $GITHUB_OUTPUT
           else
             echo "tag=v${{ steps.pkg.outputs.version }}-build.${{ github.run_number }}" >> $GITHUB_OUTPUT
-            echo "title=Desktop Agent Center v${{ steps.pkg.outputs.version }} (Build #${{ github.run_number }})" >> $GITHUB_OUTPUT
+            echo "title=Yobi v${{ steps.pkg.outputs.version }} (Build #${{ github.run_number }})" >> $GITHUB_OUTPUT
           fi
 
       # ── Download artifacts from all platforms ───────────────────────
@@ -223,7 +223,7 @@ jobs:
             **Option 1 — Terminal (Recommended)**
 
             ```bash
-            sudo xattr -rd com.apple.quarantine /Applications/DesktopAgentCenter.app
+            sudo xattr -rd com.apple.quarantine /Applications/Yobi.app
             ```
 
             **Option 2 — System Settings**

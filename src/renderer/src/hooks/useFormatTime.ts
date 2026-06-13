@@ -1,4 +1,4 @@
-// src/renderer/src/hooks/useFormatTime.ts — locale-aware relative timestamp formatter
+// locale-aware relative timestamp formatter
 import { useCallback } from 'react';
 import { useI18nStore } from '../store/i18nStore';
 

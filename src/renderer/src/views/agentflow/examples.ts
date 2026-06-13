@@ -1,4 +1,3 @@
-// src/renderer/src/views/agentflow/examples.ts
 // Built-in template flows for AgentFlow. Each entry is a full FlowDefinition
 // with placeholder values the user can fill in after loading.
 import type { FlowDefinition } from '../../../../shared/types';

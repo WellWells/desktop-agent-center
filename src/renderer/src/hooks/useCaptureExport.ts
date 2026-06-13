@@ -1,5 +1,3 @@
-// src/renderer/src/hooks/useCaptureExport.ts
-// Extracted from ChatView to reduce complexity.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAppStore } from '../store/appStore';
 import { useI18nStore } from '../store/i18nStore';
@@ -7,7 +5,6 @@ import { settingsApi, systemApi } from '../api/electronApi';
 import { getResponseAliases } from '../utils/parseMarkdownBlocks';
 import type { CaptureFormat, CaptureSettings, MarkdownCapturePayload } from '../../../shared/types';
 
-// ── Shared types (also imported by ChatView) ──────────────────────────────────
 export type ExportToast = {
   id: number;
   message: string;
@@ -15,7 +12,6 @@ export type ExportToast = {
   fileName?: string;
 } | null;
 
-// ── Constants (moved out of ChatView) ──────────────────────────────────────────────
 export const CAPTURE_PALETTES = [
   { key: 'aurora', label: 'Aurora', from: '#0f172a', to: '#3b0764' },
   { key: 'mint',   label: 'Mint',   from: '#0f766e', to: '#1f2937' },
@@ -30,7 +26,6 @@ export const CAPTURE_PALETTES = [
 
 export type CaptureDirection = 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw' | 'c';
 
-// ── Pure functions (moved out of ChatView) ──────────────────────────────────────────
 export function buildCaptureBackground(from: string, to: string, direction: CaptureDirection): string {
   if (direction === 'c') return `radial-gradient(circle at center, ${from} 0%, ${to} 100%)`;
   const angleMap: Record<Exclude<CaptureDirection, 'c'>, number> = {
@@ -63,7 +58,6 @@ function buildSummary(raw: string): string {
   return plain.length > 220 ? `${plain.slice(0, 220)}…` : plain;
 }
 
-// ── Hook ──────────────────────────────────────────────────────────────────
 export function useCaptureExport(setExportToast: (toast: ExportToast) => void) {
   const { fileContent, selectedFile, parsedBlocks } = useAppStore();
   const { t } = useI18nStore();
@@ -80,7 +74,6 @@ export function useCaptureExport(setExportToast: (toast: ExportToast) => void) {
   const [captureBusy, setCaptureBusy] = useState(false);
   const [captureBusyMode, setCaptureBusyMode] = useState<'copy' | 'save' | null>(null);
 
-  // ── Load settings from config on mount ───────────────────────────────────
   const settingsLoadedRef = useRef(false);
 
   useEffect(() => {
@@ -103,7 +96,6 @@ export function useCaptureExport(setExportToast: (toast: ExportToast) => void) {
     setCaptureFileName(defaultFileName);
   }, [selectedFile?.path, selectedFile?.name, parsedBlocks?.title, parsedBlocks?.provider, parsedBlocks?.time]);
 
-  // ── Persist settings to config whenever they change ──────────────────────
   useEffect(() => {
     if (!settingsLoadedRef.current) return;
     void settingsApi.updateCaptureSettings({

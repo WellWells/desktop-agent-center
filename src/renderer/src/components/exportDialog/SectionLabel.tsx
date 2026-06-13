@@ -1,4 +1,4 @@
-// src/renderer/src/components/exportDialog/SectionLabel.tsx — shared uppercase section label
+// shared uppercase section label
 import React from 'react';
 import { Text } from '@mantine/core';
 

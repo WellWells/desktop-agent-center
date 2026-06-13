@@ -1,4 +1,4 @@
-// src/main/telegram/messaging.ts — proactive and task result message delivery.
+// proactive and task result message delivery.
 //
 // Formats and sends flow/proactive outputs plus task success/error replies.
 // Stateless by design: the runtime passes a messaging context (bot accessor,

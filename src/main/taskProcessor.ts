@@ -1,4 +1,4 @@
-// src/main/taskProcessor.ts — processes a single queued prompt task end-to-end.
+// Processes a single queued prompt task end-to-end.
 //
 // Drives provider automation, saves the markdown output, notifies the user and
 // (for Telegram-sourced tasks) replies via the bot. Clipboard backup/restore and
@@ -124,7 +124,7 @@ export async function processTask(task: Task, deps: TaskProcessorDeps): Promise<
 
     sendToRenderer(IPC.FILE_LIST, await listOutputFiles());
 
-    const notifyTitle = langData?.['notify.completed.title'] ?? 'Desktop Agent Center';
+    const notifyTitle = langData?.['notify.completed.title'] ?? 'Yobi';
     const notifyBodyTemplate = langData?.['notify.completed.body'] ?? '"{{prompt}}" saved as {{file}}';
     const compactPrompt = promptForOutput.replace(/\s+/g, ' ').trim().slice(0, 36);
     const displayPrompt = compactPrompt.length < promptForOutput.replace(/\s+/g, ' ').trim().length

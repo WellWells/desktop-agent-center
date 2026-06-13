@@ -1,4 +1,4 @@
-// src/main/flow/types.ts — shared types for the AgentFlow execution engine.
+// shared types for the AgentFlow execution engine.
 
 import type { BrowserWindow } from 'electron';
 import type { CaptureFormat, FlowExecutionLog, MarkdownCapturePayload } from '../../shared/types';

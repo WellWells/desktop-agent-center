@@ -1,4 +1,4 @@
-// src/main/telegram/exporter.ts — export token lifecycle and callback codec.
+// export token lifecycle and callback codec.
 //
 // When a task result is sent in markdown mode, the user can request a rendered
 // snapshot (png/webp/pdf) via inline buttons. The token registry holds the data
@@ -28,7 +28,6 @@ export type TelegramExportRecord = TelegramExportContext & {
   createdAt: number;
 };
 
-// ── ExportTokenRegistry ──────────────────────────────────────────────────────
 // Encapsulates export token lifecycle: generation, TTL-aware lookup, and cleanup.
 export class ExportTokenRegistry {
   private readonly records = new Map<string, TelegramExportRecord>();

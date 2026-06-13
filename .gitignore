@@ -7,6 +7,9 @@ node_modules/
 out/
 dist/
 
+# Generated at build time (bundled into packaged app via extraResources)
+THIRD-PARTY-LICENSES.txt
+
 # Environment
 .env
 .env.local

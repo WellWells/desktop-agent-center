@@ -1,5 +1,3 @@
-// src/renderer/src/hooks/useRewriteTask.ts
-// Extracted rewrite task state machine from ChatView.
 import { startTransition, useCallback, useEffect, useState } from 'react';
 import { useAppStore } from '../store/appStore';
 import { useI18nStore } from '../store/i18nStore';

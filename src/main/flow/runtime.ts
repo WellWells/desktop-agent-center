@@ -1,4 +1,4 @@
-// src/main/flow/runtime.ts — step timeout, logging, stop signal and loop helpers.
+// step timeout, logging, stop signal and loop helpers.
 
 import type { FlowExecutionLog, SkillInstance, SkillType } from '../../shared/types';
 import type { FlowExecutorDeps, LogCallback } from './types';

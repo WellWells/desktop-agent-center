@@ -1,4 +1,4 @@
-// src/main/flow/flowManager.ts — AgentFlow flow CRUD and execution orchestration
+// AgentFlow flow CRUD and execution orchestration
 //
 // Persistence lives in flowPersistence.ts, trigger registration in
 // flowTriggers.ts, and the serial execution queue in flowQueue.ts.
@@ -42,8 +42,6 @@ export class FlowManager {
     this.deps = deps;
   }
 
-  // ── Lifecycle ────────────────────────────────────────────────────────────
-
   async init(): Promise<void> {
     const loadedFlows = await loadFlowsFromDisk();
     this.flows = loadedFlows.map((flow) => this.normalizeFlow(flow));
@@ -58,8 +56,6 @@ export class FlowManager {
     this.triggers.unregisterAll(this.flows);
     sendLog('🛑 [AgentFlow] Shut down — all triggers unregistered');
   }
-
-  // ── CRUD ─────────────────────────────────────────────────────────────────
 
   getAll(): FlowDefinition[] {
     return this.flows;
@@ -152,8 +148,6 @@ export class FlowManager {
     return this.flows;
   }
 
-  // ── Queue integration ─────────────────────────────────────────────────────
-
   setQueueChangeCallback(cb: () => void): void {
     this.queue.setOnChange(cb);
   }
@@ -228,8 +222,6 @@ export class FlowManager {
   ): { taskId: string; result: Promise<FlowExecutionResult> } {
     return this.createQueueExecution(flowId, extraContext, source);
   }
-
-  // ── Execution ────────────────────────────────────────────────────────────
 
   async execute(flowId: string, extraContext?: Record<string, string>): Promise<FlowExecutionResult> {
     const flow = this.flows.find((f) => f.id === flowId);

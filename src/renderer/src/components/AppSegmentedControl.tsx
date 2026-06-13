@@ -1,4 +1,3 @@
-// src/renderer/src/components/AppSegmentedControl.tsx
 // Shared SegmentedControl wrapper used across the app
 import React from 'react';
 import { SegmentedControl as MSegmentedControl } from '@mantine/core';

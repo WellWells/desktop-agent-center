@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Box, Button as MButton, Flex, Group, Text, Tooltip } from '@mantine/core';
+import { Box, Button as MButton, Flex, Group, Tooltip } from '@mantine/core';
 import { useAppStore } from '../store/appStore';
 import { useI18nStore } from '../store/i18nStore';
 import { useUpdateStore } from '../store/useUpdateStore';
@@ -8,14 +8,12 @@ import { AgentFlowIcon } from './AgentFlowIcon';
 import { AppWindow, Info, ListOrdered, LogIn, MessageSquare, ScrollText, Settings, ShieldAlert } from 'lucide-react';
 import { systemApi } from '../api/electronApi';
 import {
-  brandGroupStyle,
-  brandTextStyle,
   isMac,
   navScrollStyle,
   statusWrapperStyle,
   titleBarDynStyle,
 } from './titlebar/constants';
-import { BrandIcon, MacWindowControls, WindowsControls } from './titlebar/WindowControls';
+import { MacWindowControls, WindowsControls } from './titlebar/WindowControls';
 import { QueuePopover } from './titlebar/QueuePopover';
 import styles from './TitleBar.module.css';
 
@@ -30,13 +28,24 @@ export const TitleBar: React.FC = () => {
   const [queuePopoverOpen, setQueuePopoverOpen] = useState(false);
   const [cancelingTaskIds, setCancelingTaskIds] = useState<Record<string, boolean>>({});
   const [isForceSkipping, setIsForceSkipping] = useState(false);
-  const [appIconDataUrl, setAppIconDataUrl] = useState('');
   const [popoverPos, setPopoverPos] = useState<{ top: number; right: number }>({ top: 52, right: 6 });
   const queuePopoverCloseTimerRef = useRef<number | null>(null);
   const statusBadgeRef = useRef<HTMLDivElement>(null);
 
+  // OS-level window activation (not element focus): native title bars dim their
+  // chrome when the window is inactive — mac traffic lights gray out, the Windows
+  // wordmark and caption controls fade. The renderer's window focus/blur events
+  // mirror BrowserWindow activation, so no IPC is needed.
+  const [windowFocused, setWindowFocused] = useState(() => document.hasFocus());
   useEffect(() => {
-    window.electronAPI.getAppIconDataUrl().then(setAppIconDataUrl).catch(() => { });
+    const onFocus = (): void => setWindowFocused(true);
+    const onBlur = (): void => setWindowFocused(false);
+    window.addEventListener('focus', onFocus);
+    window.addEventListener('blur', onBlur);
+    return () => {
+      window.removeEventListener('focus', onFocus);
+      window.removeEventListener('blur', onBlur);
+    };
   }, []);
 
   useEffect(() => () => {
@@ -181,21 +190,11 @@ export const TitleBar: React.FC = () => {
       className={styles.bar}
       style={titleBarDynStyle}
     >
-      {isMac && <MacWindowControls t={t} />}
+      {isMac && <MacWindowControls t={t} focused={windowFocused} />}
 
-      <Group gap={7} px={10} style={brandGroupStyle}>
-        <BrandIcon dataUrl={appIconDataUrl} />
-        <Text
-          component="span"
-          fw={700}
-          fz="var(--font-size-md)"
-          c="var(--mantine-color-accent)"
-          lts="0.2px"
-          style={brandTextStyle}
-        >
-          {t('app.name')}
-        </Text>
-      </Group>
+      {/* No brand mark in the title bar — kept minimal on both platforms. macOS
+          shows only the traffic lights; Windows starts straight into the nav.
+          App identity lives in the taskbar/Dock, tray, and About. */}
 
       <Flex ref={navRef} gap={isTight ? 4 : 8} style={navScrollStyle}>
         {navItems.map((item) => (
@@ -304,7 +303,7 @@ export const TitleBar: React.FC = () => {
         )}
       </Box>
 
-      {!isMac && <WindowsControls t={t} />}
+      {!isMac && <WindowsControls t={t} focused={windowFocused} />}
     </Flex>
   );
 };

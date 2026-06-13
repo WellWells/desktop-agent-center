@@ -1,4 +1,4 @@
-// src/main/bootstrap/flowSetup.ts — FlowManager initialization wiring
+// FlowManager initialization wiring
 //
 // Creates the FlowManager with its capture/history/Telegram callbacks, wires
 // the flow queue into the TitleBar queue display, and provides the shared

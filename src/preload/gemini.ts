@@ -1,9 +1,6 @@
-// src/preload/gemini.ts
-//
 // NOTE: This preload runs with contextIsolation: false so it executes in the
 // same JS world as the page — that is what makes Object.defineProperty work.
 
-// ── Google Chrome identity stub ───────────────────────────────────────────────
 // When a Chromium-based UA is used, Google's sign-in page checks for
 // window.chrome.runtime to confirm it is running in a genuine Chrome context.
 // Electron does not expose a full window.chrome object, which causes Google to

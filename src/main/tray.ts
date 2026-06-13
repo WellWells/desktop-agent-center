@@ -1,4 +1,4 @@
-// src/main/tray.ts — Cross-platform system tray (Windows) / menu bar (macOS) integration
+// Cross-platform system tray (Windows) / menu bar (macOS) integration
 import { app, Menu, Tray, nativeImage } from 'electron';
 import type { BrowserWindow, MenuItemConstructorOptions } from 'electron';
 import { getLangCache, t } from './i18n';
@@ -6,7 +6,6 @@ import { sendLog, getAssetPath } from './helpers';
 
 let tray: Tray | null = null;
 
-// ── Tray icon loader ─────────────────────────────────────────────────────────
 // Windows : 32×32 PNG (Electron auto-scales to 16 px for the tray area).
 // macOS   : 16×16 template image (black + transparent) — adapts to light/dark
 //           menu bar automatically. Source PNG is resized at runtime via
@@ -22,7 +21,6 @@ function buildTrayIcon(): ReturnType<typeof nativeImage.createEmpty> {
   return src.resize({ width: 32, height: 32 });
 }
 
-// ── Deps interface ────────────────────────────────────────────────────────────
 export interface TrayDeps {
   getMainWin: () => BrowserWindow | null;
   getNotifyEnabled: () => boolean;
@@ -33,7 +31,6 @@ export interface TrayDeps {
   onNavigateSettings: () => void;
 }
 
-// ── Internal helpers ─────────────────────────────────────────────────────────
 function restoreWindow(getMainWin: () => BrowserWindow | null): void {
   const win = getMainWin();
   if (!win || win.isDestroyed()) return;
@@ -129,7 +126,6 @@ function rebuildMenu(deps: TrayDeps): void {
   tray.setContextMenu(buildContextMenu(deps));
 }
 
-// ── Public API ────────────────────────────────────────────────────────────────
 export function isTrayCreated(): boolean {
   return tray !== null && !tray.isDestroyed();
 }

@@ -1,4 +1,3 @@
-// src/renderer/src/views/LogView.tsx
 import React from 'react';
 import { Box } from '@mantine/core';
 import { LogPanel } from '../components/LogPanel';

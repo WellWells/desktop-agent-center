@@ -1,9 +1,7 @@
-// src/renderer/src/views/settings/components.tsx
 // Re-exports global shared components + settings-specific NavItem.
 import React from 'react';
 import { NavLink, Box } from '@mantine/core';
 
-// ── Global shared components ─────────────────────────────────────────────
 export { ToggleSwitch } from '../../components/ToggleSwitch';
 export { SectionCard } from '../../components/SectionCard';
 export { GroupHeader } from '../../components/GroupHeader';
@@ -11,10 +9,8 @@ export { SelectDropdown } from '../../components/SelectDropdown';
 export { SettingRow } from '../../components/SettingRow';
 export { SectionTitle } from '../../components/SectionTitle';
 
-// ── SegmentedControl ─────────────────────────────────────────────────────
 export { AppSegmentedControl as SegmentedControl } from '../../components/AppSegmentedControl';
 
-// ── NavItem ──────────────────────────────────────────────────────────────
 // Settings-specific navigation item; kept here as it belongs to the settings nav rail.
 export const NavItem: React.FC<{
   icon: React.ReactNode;

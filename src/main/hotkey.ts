@@ -1,4 +1,4 @@
-// src/main/hotkey.ts — Global hotkey registration via Electron globalShortcut
+// Global hotkey registration via Electron globalShortcut
 import { globalShortcut } from 'electron';
 
 let _currentAccelerator: string | null = null;

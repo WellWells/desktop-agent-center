@@ -1,4 +1,4 @@
-// scripts/generate-icons.ts — Generate platform icon files from source PNGs
+// Generate platform icon files from source PNGs
 // Run: tsx scripts/generate-icons.ts
 //
 // Outputs:

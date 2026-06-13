@@ -1,5 +1,3 @@
-// src/renderer/src/hooks/useAppBootstrap.ts
-// Extracted from App.tsx so that App can focus purely on layout/view rendering.
 import { useCallback, useEffect, useRef } from 'react';
 import { useAppStore } from '../store/appStore';
 import { useI18nStore } from '../store/i18nStore';

@@ -1,5 +1,3 @@
-// src/renderer/src/utils/shikiPlugins.ts
-
 import rehypeKatex from 'rehype-katex';
 import type { Highlighter } from 'shiki';
 import type { Theme } from '../store/themeStore';

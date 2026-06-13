@@ -1,4 +1,4 @@
-// src/main/providers/index.ts — Provider dispatcher
+// Provider dispatcher
 // Add new AI providers here; runAutomation resolves the right one by URL.
 import type { BrowserWindow } from 'electron';
 import { runGeminiAutomation } from './gemini';

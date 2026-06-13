@@ -1,4 +1,3 @@
-// src/renderer/src/theme/colorUtils.ts
 // Shared color math utilities for theme generation.
 
 export function hexToRgb(hex: string): [number, number, number] {

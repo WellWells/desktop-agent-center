@@ -1,4 +1,3 @@
-// src/renderer/src/store/appStore.ts
 import { create } from 'zustand';
 import type { OutputFile, QueueState, WorkerAttention } from '../../../shared/types';
 import { parseMarkdownBlocks } from '../utils/parseMarkdownBlocks';
@@ -96,11 +95,9 @@ export const useAppStore = create<AppState>((set) => ({
   setWorkerAttention: (workerAttention) => set({ workerAttention }),
   appendLog: (msg) =>
     set((state) => {
-      // Avoid creating a full copy when under the cap
       if (state.logs.length < 500) {
         return { logs: [...state.logs, msg] };
       }
-      // Only slice when exceeding the cap
       const logs = state.logs.slice(-499);
       logs.push(msg);
       return { logs };

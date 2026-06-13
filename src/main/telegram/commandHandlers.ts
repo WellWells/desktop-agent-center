@@ -1,4 +1,4 @@
-// src/main/telegram/commandHandlers.ts — individual bot command handler implementations.
+// individual bot command handler implementations.
 //
 // Holds the shared command option/context types plus the handlers for provider,
 // status, output-mode, and flow commands. Pairing-related handlers live in

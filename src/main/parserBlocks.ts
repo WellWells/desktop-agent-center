@@ -1,4 +1,4 @@
-// src/main/parserBlocks.ts — Parser-block execution against fetched HTML/XML
+// Parser-block execution against fetched HTML/XML
 //
 // Pure functions: cheerio-based CSS selector / regex / RSS extraction blocks.
 // No Electron APIs here — page loading lives in pageLoader.ts.

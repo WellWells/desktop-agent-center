@@ -1,4 +1,4 @@
-// src/main/telegram/runtime.ts — bot lifecycle and config synchronization.
+// bot lifecycle and config synchronization.
 //
 // Owns the grammy Bot instance, status reporting, and the export token
 // registry. Message delivery lives in messaging.ts / exportHandlers.ts and

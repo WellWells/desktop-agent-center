@@ -1,4 +1,4 @@
-// src/main/bootstrap/telegramSetup.ts — Telegram runtime initialization wiring
+// Telegram runtime initialization wiring
 //
 // Builds the TelegramRuntime with all config/queue/flow callbacks. The
 // FlowManager is created later in app.whenReady(), so it is accessed through

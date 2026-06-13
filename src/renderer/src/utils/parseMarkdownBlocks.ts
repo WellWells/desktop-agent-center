@@ -1,4 +1,3 @@
-// src/renderer/src/utils/parseMarkdownBlocks.ts
 // Parses a Markdown string into structured blocks based on ## headings.
 // IMPORTANT: The original Markdown string is never mutated.
 import { useI18nStore } from '../store/i18nStore';

@@ -1,4 +1,4 @@
-// src/main/index.ts — Electron main process entry point
+// Electron main process entry point
 //
 // Thin orchestrator: app lifecycle wiring only. Setup logic lives in
 // src/main/bootstrap/ (appSetup, traySetup, flowSetup, telegramSetup).
@@ -13,7 +13,6 @@
   };
 }
 
-// ── Global process safety net ─────────────────────────────────────────────────
 // Must be registered before any async work starts to catch stray rejections
 // from third-party libraries (e.g. GrammY AbortError on bot restart) that
 // bypass all application-level try/catch blocks.
@@ -58,7 +57,7 @@ import { setupTrayAndCloseBehavior, buildTrayIpcCallbacks } from './bootstrap/tr
 import { initFlowManager, broadcastMergedQueueState } from './bootstrap/flowSetup';
 import { createTelegramRuntime } from './bootstrap/telegramSetup';
 
-// ── Chromium flags — must be called before app.on('ready') ──────────────────
+// Chromium flags — must be called before app.on('ready')
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
 app.commandLine.appendSwitch('disable-background-timer-throttling');
 app.commandLine.appendSwitch('disable-backgrounding-occluded-windows');
@@ -92,10 +91,8 @@ const TELEGRAM_SESSION_ID = `${app.getName().toLowerCase()}-desktop`;
 // Track powerSaveBlocker ID for cleanup
 let powerSaveBlockerId: number | null = null;
 
-// ── AgentFlow (Flow Automation) ──────────────────────────────────────────────
 let flowManager: FlowManager | null = null;
 
-// ── Queue Manager ─────────────────────────────────────────────────────────────
 const queue = new QueueManager(async (task: Task) => {
   await processTask(task, { telegramRuntime });
 });
@@ -107,14 +104,13 @@ queue.onUpdate(() => {
   broadcastMergedQueueState(queue, flowManager);
 });
 
-// ── Telegram Runtime ──────────────────────────────────────────────────────────
 const telegramRuntime = createTelegramRuntime({
   queue,
   getFlowManager: () => flowManager,
 });
 
 app.whenReady().then(async () => {
-  app.setAppUserModelId('com.wellstsai.dac');
+  app.setAppUserModelId('com.wellstsai.yobi');
   powerSaveBlockerId = powerSaveBlocker.start('prevent-app-suspension');
   session.fromPartition('persist:gemini').setUserAgent(CLEAN_UA);
   session.fromPartition('persist:url-parser').setUserAgent(CLEAN_UA);

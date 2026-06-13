@@ -1,4 +1,3 @@
-// src/renderer/src/views/settings/hooks/useTelegramSettings.ts
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { telegramApi, clipboardApi } from '../../../api/electronApi';
 

@@ -1,4 +1,4 @@
-// src/main/providers/automationExecutor.ts — Shared Node-side helpers for provider automations
+// Shared Node-side helpers for provider automations
 // These deduplicate the execute/timeout/baseline/focus patterns that every
 // provider (gemini / chatgpt / perplexity / duckai) repeated verbatim.
 import type { WebContents } from 'electron';

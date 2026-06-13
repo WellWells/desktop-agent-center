@@ -1,4 +1,3 @@
-// src/renderer/src/views/settings/hooks/useSettingsNav.ts
 import React, { useMemo, useState } from 'react';
 import { Bot, MessageSquare, ShieldAlert, SlidersHorizontal } from 'lucide-react';
 import { useI18nStore } from '../../../store/i18nStore';

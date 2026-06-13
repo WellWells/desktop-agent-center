@@ -1,4 +1,4 @@
-// src/main/ipcContext.ts — shared context and helpers for IPC handler registrars.
+// Shared context and helpers for IPC handler registrars.
 //
 // setupIpcHandlers builds one IpcContext and passes it to each registerXxxHandlers
 // function. Stateless helpers (path validation, dialog pickers) live here too so

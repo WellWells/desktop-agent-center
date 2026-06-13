@@ -1,4 +1,4 @@
-// src/main/flow/flowTriggers.ts — hotkey/cron trigger registration for flows
+// hotkey/cron trigger registration for flows
 
 import { globalShortcut } from 'electron';
 import cron from 'node-cron';
@@ -69,7 +69,7 @@ export class FlowTriggerRegistry {
   unregister(flow: FlowDefinition): void {
     const hotkey = this.flowHotkeys.get(flow.id);
     if (hotkey) {
-      try { globalShortcut.unregister(hotkey); } catch { /* ignore */ }
+      try { globalShortcut.unregister(hotkey); } catch {}
       this.flowHotkeys.delete(flow.id);
     }
 

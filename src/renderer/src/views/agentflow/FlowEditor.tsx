@@ -157,7 +157,6 @@ export const FlowEditor: React.FC<FlowEditorProps> = ({
           <Box maw={560} mx="auto">
             <Stack gap="xl">
 
-              {/* Flow metadata */}
               <SectionCard>
                 <Stack gap="xs">
                   <AppTextInput
@@ -179,7 +178,6 @@ export const FlowEditor: React.FC<FlowEditorProps> = ({
                 </Stack>
               </SectionCard>
 
-              {/* Trigger config */}
               <SectionCard>
                 <Stack gap="sm">
                   <Text fw={600} fz="sm" c="var(--mantine-color-default-color)">{t('agentflow.trigger')}</Text>
@@ -187,10 +185,8 @@ export const FlowEditor: React.FC<FlowEditorProps> = ({
                 </Stack>
               </SectionCard>
 
-              {/* Steps */}
               <FlowStepsCard flow={flow} t={t} onAddStep={handleAddStep} />
 
-              {/* Execution result panel */}
               {executionLogs.length > 0 && (
                 <ExecutionResultPanel steps={flow.steps} executionLogs={executionLogs} t={t} />
               )}

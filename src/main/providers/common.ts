@@ -1,4 +1,4 @@
-// src/main/providers/common.ts — Shared helpers for all AI provider automations
+// Shared helpers for all AI provider automations
 import type { WebContents } from 'electron';
 
 export function sleep(ms: number): Promise<void> {
@@ -77,7 +77,6 @@ export async function waitForCloudflareResolved(
   throw new Error('Cloudflare challenge was not resolved within the allowed time');
 }
 
-// ── Shared browser-side utilities ─────────────────────────────────────────────
 // These strings are interpolated into executeJavaScript automation scripts so
 // each provider IIFE gets the same canonical implementation.
 // Rules: no backticks, no ??, no TypeScript syntax — plain ES2017 for Chromium.

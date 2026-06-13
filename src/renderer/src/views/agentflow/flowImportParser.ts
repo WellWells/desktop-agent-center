@@ -1,4 +1,3 @@
-// src/renderer/src/views/agentflow/flowImportParser.ts
 // Parses a raw unknown JSON value into an array of FlowDefinition objects.
 // Accepts three formats:
 //   1. Single FlowDefinition (has "steps" array and "trigger")

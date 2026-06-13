@@ -1,5 +1,3 @@
-// src/renderer/src/components/ShikiCodeBlock.tsx
-
 import React, { useEffect, useState, useCallback } from 'react';
 import { ActionIcon, Badge } from '@mantine/core';
 import { Copy, Check } from 'lucide-react';

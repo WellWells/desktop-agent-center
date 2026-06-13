@@ -41,21 +41,21 @@ function watcherPlugin(): Plugin {
 }
 
 async function main() {
-  // ── Step 1: Start renderer Vite dev server ─────────────────────────────
+  // Step 1: Start renderer Vite dev server
   const server = await createServer({ configFile: 'vite.renderer.config.ts' });
   await server.listen();
   server.printUrls();
 
   rendererUrl = server.resolvedUrls?.local[0] ?? 'http://localhost:5173';
 
-  // ── Step 2: Watch preload (restart electron on rebuild) ─────────────────
+  // Step 2: Watch preload (restart electron on rebuild)
   await build({
     configFile: 'vite.preload.config.ts',
     build: { watch: {} },
     plugins: [watcherPlugin()],
   });
 
-  // ── Step 3: Watch main process (restart electron on rebuild) ────────────
+  // Step 3: Watch main process (restart electron on rebuild)
   await build({
     configFile: 'vite.main.config.ts',
     build: { watch: {} },

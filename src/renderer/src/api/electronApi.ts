@@ -1,4 +1,3 @@
-// src/renderer/src/api/electronApi.ts
 // Centralized wrapper for all window.electronAPI IPC calls,
 // so UI components do not depend directly on the underlying transport.
 import type {

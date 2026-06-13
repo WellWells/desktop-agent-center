@@ -1,4 +1,4 @@
-// src/main/configEncryption.ts — safeStorage-based token encryption
+// safeStorage-based token encryption
 //
 // Versioned encryption format:
 // 'enc:v1:<base64>' — encrypted with safeStorage (OS-level key)

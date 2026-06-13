@@ -1,4 +1,4 @@
-// src/main/telegram/exportHandlers.ts — export callback and direct-export delivery.
+// export callback and direct-export delivery.
 //
 // Handles inline-button export callbacks (markdown reply mode) and direct file
 // exports (png/webp/pdf reply modes). Stateless by design: callers pass a small

@@ -1,4 +1,4 @@
-// src/main/flow/executor.ts — AgentFlow flow execution engine.
+// AgentFlow flow execution engine.
 //
 // Executes a FlowDefinition step-by-step, maintaining a context pool for variable
 // interpolation between steps. A single recursive `runRange` drives both the
@@ -108,7 +108,6 @@ async function expandLoop(
       items = parsed;
     }
   } catch {
-    // ignore
   }
 
   if (limitIterations && limit > 0) {
@@ -155,7 +154,6 @@ async function expandLoop(
     }
     if (!nested) sendLog(`🔄 [AgentFlow] Loop complete`);
   } else {
-    // Skip loop body
     for (let j = loopIndex + 1; j < bodyEnd; j++) {
       emitLog(onLog, flow.id, flow.steps[j].id, j, 'skipped');
       if (depth === 0) progress.completed++;

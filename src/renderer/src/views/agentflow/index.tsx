@@ -132,7 +132,6 @@ export const AgentFlowView: React.FC = () => {
   return (
     <FlowDropzone t={t} onImport={(imported) => { void importFlows(imported); }}>
       <Flex flex={1} h="100%" style={{ overflow: 'hidden' }}>
-        {/* Sidebar: flow list */}
         <Stack
           gap={0}
           w={240}
@@ -198,7 +197,6 @@ export const AgentFlowView: React.FC = () => {
           </Box>
         </Stack>
 
-        {/* Context menu */}
         <ContextMenuPortal
           position={contextMenu ? { x: contextMenu.x, y: contextMenu.y } : null}
           onClose={() => setContextMenu(null)}
@@ -212,7 +210,6 @@ export const AgentFlowView: React.FC = () => {
           <Menu.Item leftSection={<Trash2 size={13} />} color="red" onClick={() => { setPendingDeleteId(contextMenu!.flowId); setContextMenu(null); }}>{t('agentflow.deleteFlow')}</Menu.Item>
         </ContextMenuPortal>
 
-        {/* Delete confirm dialog */}
         <WebDialog
           open={Boolean(pendingDeleteId)}
           title={t('agentflow.deleteFlow.confirm')}
@@ -224,7 +221,6 @@ export const AgentFlowView: React.FC = () => {
           onCancel={() => setPendingDeleteId(null)}
         />
 
-        {/* Templates modal */}
         <FlowTemplatesModal
           open={templatesOpen}
           t={t}
@@ -233,7 +229,6 @@ export const AgentFlowView: React.FC = () => {
           onImport={(imported) => { void importFlows(imported); setTemplatesOpen(false); }}
         />
 
-        {/* Import modal (URL/file) */}
         <FlowImportModal
           open={importOpen}
           t={t}
@@ -242,7 +237,6 @@ export const AgentFlowView: React.FC = () => {
           onImport={(imported) => { void importFlows(imported); setImportOpen(false); }}
         />
 
-        {/* Editor canvas */}
         <Flex flex={1} direction="column" h="100%" style={{ overflow: 'hidden' }}>
           {selectedFlow ? (
             <FlowEditor

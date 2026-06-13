@@ -1,4 +1,4 @@
-// src/main/flow/checkpoint.ts — generic per-step checkpoint persistence.
+// generic per-step checkpoint persistence.
 //
 // RSS and scraper skills both persist a small JSON checkpoint per step instance
 // to deduplicate items across runs. This factors the identical path/load/save

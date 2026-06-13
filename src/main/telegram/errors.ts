@@ -1,4 +1,4 @@
-// src/main/telegram/errors.ts — error message unpacking for Telegram logs.
+// error message unpacking for Telegram logs.
 //
 // grammy/HTTP errors often nest the useful detail under `error`/`cause`; this
 // flattens them into a single human-readable string.

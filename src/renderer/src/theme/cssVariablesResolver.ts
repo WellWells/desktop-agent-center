@@ -1,14 +1,10 @@
-// src/renderer/src/theme/cssVariablesResolver.ts
-//
-// Bridges DAC's CSS custom properties into the Mantine CSS variable system.
+// Bridges Yobi's CSS custom properties into the Mantine CSS variable system.
 // Each theme defines 11 independent tokens; 6 state-derived tokens are
 // computed automatically by expandTheme() — no manual hover values needed.
 
 import type { CSSVariablesResolver } from '@mantine/core';
 import type { Theme } from '../store/themeStore';
 import { lerpHex, hexToRgba } from './colorUtils';
-
-// ── Per-theme base tokens (11 independent values) ────────────────────────────
 
 interface BaseTheme {
   bgPrimary: string;
@@ -47,7 +43,6 @@ interface ThemeColors {
   '--selection-bg': string;
 }
 
-// ── Derived token pipeline ────────────────────────────────────────────────────
 // Hover / opacity tokens are computed from base colors — never hand-coded.
 
 function expandTheme(base: BaseTheme, isLight: boolean): ThemeColors {
@@ -74,8 +69,6 @@ function expandTheme(base: BaseTheme, isLight: boolean): ThemeColors {
     '--code-bg': base.bgSurface,
   };
 }
-
-// ── Theme definitions — 11 tokens each ───────────────────────────────────────
 
 const LIGHT_THEMES: readonly Theme[] = ['light', 'sepia', 'rosepine'];
 
@@ -159,14 +152,12 @@ const baseThemes: Record<Theme, BaseTheme> = {
   },
 };
 
-// ── Resolver factory ──────────────────────────────────────────────────────────
-
-export function buildCssVariablesResolver(dacTheme: Theme): CSSVariablesResolver {
-  const isLight = LIGHT_THEMES.includes(dacTheme);
-  const colors = expandTheme(baseThemes[dacTheme], isLight);
+export function buildCssVariablesResolver(yobiTheme: Theme): CSSVariablesResolver {
+  const isLight = LIGHT_THEMES.includes(yobiTheme);
+  const colors = expandTheme(baseThemes[yobiTheme], isLight);
 
   const allVars = {
-    // DAC semantic variables
+    // Yobi semantic variables
     '--bg-primary': colors['--bg-primary'],
     '--bg-secondary': colors['--bg-secondary'],
     '--bg-tertiary': colors['--bg-tertiary'],
@@ -200,7 +191,7 @@ export function buildCssVariablesResolver(dacTheme: Theme): CSSVariablesResolver
     '--mantine-color-action-hover': colors['--bg-hover'],
     '--mantine-color-action-active': colors['--accent-dim'],
 
-    // DAC extended bridges
+    // Yobi extended bridges
     '--mantine-color-bg-tertiary': colors['--bg-tertiary'],
     '--mantine-color-accent': colors['--accent'],
     '--mantine-color-accent-dim': colors['--accent-dim'],

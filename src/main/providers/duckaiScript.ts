@@ -1,12 +1,10 @@
-// src/main/providers/duckaiScript.ts — Browser-side automation script builder
+// Browser-side automation script builder
 // and localStorage injection helpers for Duck AI. Split out of duckai.ts to
 // keep the entry module focused on the Node-side orchestration flow.
 import type { WebContents } from 'electron';
 import { INJECTED_SLEEP_JS, INJECTED_WAIT_FOR_JS } from './common';
 
 const DUCKAI_MAX_PROMPT_CHARS = 16_000;
-
-// ── Onboarding prevention helpers ────────────────────────────────────────────
 
 /**
  * Writes the localStorage keys that suppress duck.ai's first-visit onboarding
